@@ -1,0 +1,807 @@
+{
+  "participantes": [
+    {
+      "id": "p-01",
+      "nombre": "Participante 01",
+      "corredores": [
+        "WELLENS",
+        "PLANCKAERT",
+        "AFFINI",
+        "BIERMANS",
+        "VAN DEN BERG",
+        "MARC HIRSCHI",
+        "SEAN QUINN",
+        "DURBRIDGE",
+        "BARGUIL"
+      ],
+      "equipos": [
+        "BAHRAIN",
+        "XDS ASTANA",
+        "EF"
+      ]
+    },
+    {
+      "id": "p-02",
+      "nombre": "Participante 02",
+      "corredores": [
+        "TOBIAS JOHANNESSEN",
+        "EENKHOORN",
+        "HERMANS",
+        "CORT NIELSEN",
+        "CARAPAZ",
+        "HOOLE",
+        "GERMANI",
+        "TOBIAS FOSS",
+        "STANNARD"
+      ],
+      "equipos": [
+        "CAJA RURAL",
+        "DECATHLON",
+        "EF"
+      ]
+    },
+    {
+      "id": "p-03",
+      "nombre": "Participante 03",
+      "corredores": [
+        "TEUNISSEN",
+        "AYUSO",
+        "PEDERSEN",
+        "VINOKUROV",
+        "RAÚL G PIERNA",
+        "EENKHOORN",
+        "ALLEGAERT",
+        "VINGEGAARD",
+        "NEILANDS"
+      ],
+      "equipos": [
+        "VISMA",
+        "TUDOR",
+        "BAHRAIN"
+      ]
+    },
+    {
+      "id": "p-04",
+      "nombre": "Participante 04",
+      "corredores": [
+        "MEURISSE",
+        "VEISTROFFER",
+        "KOOIJ",
+        "CAMPENAERTS",
+        "DEGENKOLB",
+        "HUGO PAGE",
+        "MARCO HALLER",
+        "JOEL NICOLAU",
+        "DEBRUYNE"
+      ],
+      "equipos": [
+        "RED BULL",
+        "XDS ASTANA",
+        "JAYCO ALULA"
+      ]
+    },
+    {
+      "id": "p-05",
+      "nombre": "Participante 05",
+      "corredores": [
+        "FRETIN",
+        "BERNAL",
+        "SKUJINS",
+        "ACKERMANN",
+        "LE BERRE",
+        "VERSTRYNGE",
+        "SKJELMOSE",
+        "HESSMANN",
+        "VINGEGAARD"
+      ],
+      "equipos": [
+        "PINARELLO",
+        "PICNIC",
+        "BAHRAIN"
+      ]
+    },
+    {
+      "id": "p-06",
+      "nombre": "Participante 06",
+      "corredores": [
+        "LIPOWITZ",
+        "VAN GILS",
+        "BERNAL",
+        "VEN LERBERGHE",
+        "VELASCO",
+        "ARENSMAN",
+        "NEILANDS",
+        "PER STRAND HAGENES",
+        "KUSS"
+      ],
+      "equipos": [
+        "DECATHLON",
+        "UNO-X",
+        "PICNIC"
+      ]
+    },
+    {
+      "id": "p-07",
+      "nombre": "Participante 07",
+      "corredores": [
+        "TRENTIN",
+        "V PARET PEINTRE",
+        "PEDERSEN",
+        "OLDANI",
+        "MAX KANTER",
+        "BALLERINI",
+        "BENOOT",
+        "CEPEDA",
+        "CEES BOL"
+      ],
+      "equipos": [
+        "XDS ASTANA",
+        "EF",
+        "SOUDAL QUICK STEP"
+      ]
+    },
+    {
+      "id": "p-08",
+      "nombre": "Participante 08",
+      "corredores": [
+        "JOEL NICOLAU",
+        "ANDERS JOHANNESSEN",
+        "BALDERSTONE",
+        "G BENNET",
+        "MEURISSE",
+        "DEGENKOLB",
+        "GATE",
+        "VAN DIJKE",
+        "HERMANS"
+      ],
+      "equipos": [
+        "TUDOR",
+        "CAJA RURAL",
+        "PINARELLO"
+      ]
+    },
+    {
+      "id": "p-09",
+      "nombre": "Participante 09",
+      "corredores": [
+        "BAUHAUS",
+        "SKJELMOSE",
+        "BREUILLARD",
+        "PER STRAND HAGENES",
+        "CASTRILLO",
+        "CORT NIELSEN",
+        "MC NULTY",
+        "GAVIRIA",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "NSN",
+        "TUDOR",
+        "VISMA"
+      ]
+    },
+    {
+      "id": "p-10",
+      "nombre": "Participante 10",
+      "corredores": [
+        "CARAPAZ",
+        "VAN WILDER",
+        "ASKEY",
+        "CEES BOL",
+        "VAN DEN BROEK",
+        "PHILIPSEN",
+        "DEREK GEE",
+        "NEILANDS",
+        "WELLENS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "JAYCO ALULA",
+        "TOTAL ENERGIES"
+      ]
+    },
+    {
+      "id": "p-11",
+      "nombre": "Participante 11",
+      "corredores": [
+        "JAVIER ROMO",
+        "EVENEPOEL",
+        "VERONA",
+        "PRODHOMME",
+        "CEES BOL",
+        "K ASGREEN",
+        "ANDERS JOHANNESSEN",
+        "BENOOT",
+        "BAUHAUS"
+      ],
+      "equipos": [
+        "BAHRAIN",
+        "PICNIC",
+        "FDJ"
+      ]
+    },
+    {
+      "id": "p-12",
+      "nombre": "Participante 12",
+      "corredores": [
+        "V PARET PEINTRE",
+        "AFFINI",
+        "MARSMAN",
+        "BIERMANS",
+        "TRATNIK",
+        "WELLENS",
+        "YATES",
+        "DORIAN GODON",
+        "VERVAEKE"
+      ],
+      "equipos": [
+        "TUDOR",
+        "TOTAL ENERGIES",
+        "CAJA RURAL"
+      ]
+    },
+    {
+      "id": "p-13",
+      "nombre": "Participante 13",
+      "corredores": [
+        "STEINHAUSER",
+        "ALEX MOLENAAR",
+        "POGACAR",
+        "CRAPS",
+        "VAN GILS",
+        "VERMEERSCH",
+        "VAN DEN BROEK",
+        "HOOLE",
+        "JORDAN JEGAT"
+      ],
+      "equipos": [
+        "CAJA RURAL",
+        "UNO-X",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-14",
+      "nombre": "Participante 14",
+      "corredores": [
+        "JORGENSON",
+        "PRODHOMME",
+        "MARCO HALLER",
+        "YANNIS VOISARD",
+        "SCHMID",
+        "ARTZ",
+        "RUBIO",
+        "TOM PIDCOCK",
+        "DORIAN GODON"
+      ],
+      "equipos": [
+        "EF",
+        "TOTAL ENERGIES",
+        "JAYCO ALULA"
+      ]
+    },
+    {
+      "id": "p-15",
+      "nombre": "Participante 15",
+      "corredores": [
+        "YANNIS VOISARD",
+        "MARCO HALLER",
+        "DEL TORO",
+        "NEILANDS",
+        "BENOOT",
+        "VAN EETVELT",
+        "DHONDT",
+        "VERVAEKE",
+        "TOBIAS FOSS"
+      ],
+      "equipos": [
+        "INEOS",
+        "NSN",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-16",
+      "nombre": "Participante 16",
+      "corredores": [
+        "VALGREN",
+        "VAN DIJKE",
+        "CASTRILLO",
+        "VAN BAARLE",
+        "DORIAN GODON",
+        "STORER",
+        "POGACAR",
+        "CEPEDA",
+        "PER STRAND HAGENES"
+      ],
+      "equipos": [
+        "LOTTO",
+        "DECATHLON",
+        "EF"
+      ]
+    },
+    {
+      "id": "p-17",
+      "nombre": "Participante 17",
+      "corredores": [
+        "CARUSO",
+        "PRODHOMME",
+        "GIRMAY",
+        "SIMMONS",
+        "BITTNER",
+        "DELBOVE",
+        "PACHER",
+        "GROSSCHARTNER",
+        "LIPOWITZ"
+      ],
+      "equipos": [
+        "DECATHLON",
+        "PICNIC",
+        "PINARELLO"
+      ]
+    },
+    {
+      "id": "p-18",
+      "nombre": "Participante 18",
+      "corredores": [
+        "CARUSO",
+        "DELBOVE",
+        "KOOIJ",
+        "VINOKUROV",
+        "TRAEEN",
+        "PER STRAND HAGENES",
+        "GAVIRIA",
+        "FRETIN",
+        "BARGUIL"
+      ],
+      "equipos": [
+        "MOVISTAR",
+        "COFIDIS",
+        "LOTTO"
+      ]
+    },
+    {
+      "id": "p-19",
+      "nombre": "Participante 19",
+      "corredores": [
+        "SIMMONS",
+        "DE LIE",
+        "GAVIRIA",
+        "CEPEDA",
+        "HINDLEY",
+        "A PARET PEINTRE",
+        "BEN THOMAS",
+        "SLOCK",
+        "TURGIS"
+      ],
+      "equipos": [
+        "UNO-X",
+        "UAE",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-20",
+      "nombre": "Participante 20",
+      "corredores": [
+        "ENGELHARDT",
+        "VAN ASBROECK",
+        "TOBIAS FOSS",
+        "VERCHER",
+        "BITTNER",
+        "RUBIO",
+        "VAN GILS",
+        "G MARTIN",
+        "PACHER"
+      ],
+      "equipos": [
+        "ALPECIN",
+        "EF",
+        "PINARELLO"
+      ]
+    },
+    {
+      "id": "p-21",
+      "nombre": "Participante 21",
+      "corredores": [
+        "YATES",
+        "HERMANS",
+        "ALAPHILIPPE",
+        "PLANCKAERT",
+        "RAÚL G PIERNA",
+        "STORER",
+        "VEN LERBERGHE",
+        "VERONA",
+        "O CONNOR"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "COFIDIS",
+        "SOUDAL QUICK STEP"
+      ]
+    },
+    {
+      "id": "p-22",
+      "nombre": "Participante 22",
+      "corredores": [
+        "COSTIOU",
+        "STUYVEN",
+        "KIRSCH",
+        "BEN THOMAS",
+        "VINGEGAARD",
+        "BIESTERBOS",
+        "HIGUITA",
+        "TEUNISSEN",
+        "TARLING"
+      ],
+      "equipos": [
+        "UAE",
+        "INEOS",
+        "FDJ"
+      ]
+    },
+    {
+      "id": "p-23",
+      "nombre": "Participante 23",
+      "corredores": [
+        "RUSSO",
+        "YANNIS VOISARD",
+        "O BRIEN",
+        "DEREK GEE",
+        "HERMANS",
+        "SKUJINS",
+        "J F PARRA",
+        "JORGENSON",
+        "GROSSCHARTNER"
+      ],
+      "equipos": [
+        "UNO-X",
+        "SOUDAL QUICK STEP",
+        "TOTAL ENERGIES"
+      ]
+    },
+    {
+      "id": "p-24",
+      "nombre": "Participante 24",
+      "corredores": [
+        "JORDAN JEGAT",
+        "VAN GILS",
+        "POLITT",
+        "SEAN QUINN",
+        "DENZ",
+        "KIRSCH",
+        "VERONA",
+        "LE BERRE",
+        "ARANBURU"
+      ],
+      "equipos": [
+        "VISMA",
+        "SOUDAL QUICK STEP",
+        "UAE"
+      ]
+    },
+    {
+      "id": "p-25",
+      "nombre": "Participante 25",
+      "corredores": [
+        "BAUDIN",
+        "LOUVEL",
+        "PER STRAND HAGENES",
+        "MARKL",
+        "BERNAL",
+        "RUBIO",
+        "AZPARREN",
+        "CHRIS HARPER",
+        "RAÚL G PIERNA"
+      ],
+      "equipos": [
+        "VISMA",
+        "DECATHLON",
+        "JAYCO ALULA"
+      ]
+    },
+    {
+      "id": "p-26",
+      "nombre": "Participante 26",
+      "corredores": [
+        "TURGIS",
+        "R GREGOIRE",
+        "CARAPAZ",
+        "BALLERINI",
+        "DEL TORO",
+        "SKJELMOSE",
+        "VAN DEN BERG",
+        "ARANBURU",
+        "CASTRILLO"
+      ],
+      "equipos": [
+        "PINARELLO",
+        "DECATHLON",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-27",
+      "nombre": "Participante 27",
+      "corredores": [
+        "YATES",
+        "BALLERINI",
+        "SEAN QUINN",
+        "MARKL",
+        "CAMPENAERTS",
+        "EENKHOORN",
+        "V PARET PEINTRE",
+        "NEILANDS",
+        "VAN MOER"
+      ],
+      "equipos": [
+        "COFIDIS",
+        "LIDL-TREK",
+        "LOTTO"
+      ]
+    },
+    {
+      "id": "p-28",
+      "nombre": "Participante 28",
+      "corredores": [
+        "DILLIER",
+        "GUERNALEC",
+        "G BENNET",
+        "BALDERSTONE",
+        "DORIAN GODON",
+        "CHRIS HARPER",
+        "GATE",
+        "GANNA",
+        "TOBIAS FOSS"
+      ],
+      "equipos": [
+        "RED BULL",
+        "ALPECIN",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-29",
+      "nombre": "Participante 29",
+      "corredores": [
+        "BIESTERBOS",
+        "GATE",
+        "MARCO HALLER",
+        "SKUJINS",
+        "PER STRAND HAGENES",
+        "STEINHAUSER",
+        "SCHMID",
+        "EVENEPOEL",
+        "LIPOWITZ"
+      ],
+      "equipos": [
+        "SOUDAL QUICK STEP",
+        "TOTAL ENERGIES",
+        "INEOS"
+      ]
+    },
+    {
+      "id": "p-30",
+      "nombre": "Participante 30",
+      "corredores": [
+        "VAN MOER",
+        "MC NULTY",
+        "BAUHAUS",
+        "MARSMAN",
+        "ANDERS JOHANNESSEN",
+        "PLANCKAERT",
+        "HERMANS",
+        "PEDERSEN",
+        "G MARTIN"
+      ],
+      "equipos": [
+        "VISMA",
+        "INEOS",
+        "LIDL-TREK"
+      ]
+    }
+  ],
+  "resultados": [],
+  "bonusFinal": null,
+  "calendario": [
+    {
+      "numero": 1,
+      "tipo": "contrarreloj_equipos",
+      "fecha": "2026-07-04",
+      "dia": "Sáb",
+      "salida": "Barcelona",
+      "meta": "Barcelona",
+      "km": 19.6
+    },
+    {
+      "numero": 2,
+      "tipo": "ondulada",
+      "fecha": "2026-07-05",
+      "dia": "Dom",
+      "salida": "Tarragona",
+      "meta": "Barcelona",
+      "km": 168.5
+    },
+    {
+      "numero": 3,
+      "tipo": "montana",
+      "fecha": "2026-07-06",
+      "dia": "Lun",
+      "salida": "Granollers",
+      "meta": "Les Angles",
+      "km": 195.9
+    },
+    {
+      "numero": 4,
+      "tipo": "ondulada",
+      "fecha": "2026-07-07",
+      "dia": "Mar",
+      "salida": "Carcassonne",
+      "meta": "Foix",
+      "km": 181.9
+    },
+    {
+      "numero": 5,
+      "tipo": "llana",
+      "fecha": "2026-07-08",
+      "dia": "Mié",
+      "salida": "Lannemezan",
+      "meta": "Pau",
+      "km": 158.3
+    },
+    {
+      "numero": 6,
+      "tipo": "montana",
+      "fecha": "2026-07-09",
+      "dia": "Jue",
+      "salida": "Pau",
+      "meta": "Gavarnie Gèdre",
+      "km": 186.2
+    },
+    {
+      "numero": 7,
+      "tipo": "llana",
+      "fecha": "2026-07-10",
+      "dia": "Vie",
+      "salida": "Hagetmau",
+      "meta": "Bordeaux",
+      "km": 175.1
+    },
+    {
+      "numero": 8,
+      "tipo": "llana",
+      "fecha": "2026-07-11",
+      "dia": "Sáb",
+      "salida": "Périgueux",
+      "meta": "Bergerac",
+      "km": 180.4
+    },
+    {
+      "numero": 9,
+      "tipo": "ondulada",
+      "fecha": "2026-07-12",
+      "dia": "Dom",
+      "salida": "Malemort",
+      "meta": "Ussel",
+      "km": 185.5
+    },
+    {
+      "numero": 10,
+      "tipo": "montana",
+      "fecha": "2026-07-14",
+      "dia": "Mar",
+      "salida": "Aurillac",
+      "meta": "Le Lioran",
+      "km": 166.6
+    },
+    {
+      "numero": 11,
+      "tipo": "llana",
+      "fecha": "2026-07-15",
+      "dia": "Mié",
+      "salida": "Vichy",
+      "meta": "Nevers",
+      "km": 161.3
+    },
+    {
+      "numero": 12,
+      "tipo": "llana",
+      "fecha": "2026-07-16",
+      "dia": "Jue",
+      "salida": "Circuit Nevers Magny-Cours",
+      "meta": "Chalon sur Saône",
+      "km": 179.1
+    },
+    {
+      "numero": 13,
+      "tipo": "ondulada",
+      "fecha": "2026-07-17",
+      "dia": "Vie",
+      "salida": "Dole",
+      "meta": "Belfort",
+      "km": 205.8
+    },
+    {
+      "numero": 14,
+      "tipo": "montana",
+      "fecha": "2026-07-18",
+      "dia": "Sáb",
+      "salida": "Mulhouse",
+      "meta": "Le Markstein Fellering",
+      "km": 155.3
+    },
+    {
+      "numero": 15,
+      "tipo": "montana",
+      "fecha": "2026-07-19",
+      "dia": "Dom",
+      "salida": "Champagnole",
+      "meta": "Plateau de Solaison",
+      "km": 183.9
+    },
+    {
+      "numero": 16,
+      "tipo": "contrarreloj_individual",
+      "fecha": "2026-07-21",
+      "dia": "Mar",
+      "salida": "Évian les Bains",
+      "meta": "Thonon les Bains",
+      "km": 26.1
+    },
+    {
+      "numero": 17,
+      "tipo": "llana",
+      "fecha": "2026-07-22",
+      "dia": "Mié",
+      "salida": "Chambéry",
+      "meta": "Voiron",
+      "km": 174.7
+    },
+    {
+      "numero": 18,
+      "tipo": "montana",
+      "fecha": "2026-07-23",
+      "dia": "Jue",
+      "salida": "Voiron",
+      "meta": "Orcières Merlette",
+      "km": 185.2
+    },
+    {
+      "numero": 19,
+      "tipo": "montana",
+      "fecha": "2026-07-24",
+      "dia": "Vie",
+      "salida": "Gap",
+      "meta": "Alpe d'Huez",
+      "km": 127.9
+    },
+    {
+      "numero": 20,
+      "tipo": "montana",
+      "fecha": "2026-07-25",
+      "dia": "Sáb",
+      "salida": "Le Bourg d'Oisans",
+      "meta": "Alpe d'Huez",
+      "km": 170.9
+    },
+    {
+      "numero": 21,
+      "tipo": "llana",
+      "fecha": "2026-07-26",
+      "dia": "Dom",
+      "salida": "Thoiry",
+      "meta": "Paris Champs-Élysées",
+      "km": 133
+    }
+  ],
+  "descansos": [
+    {
+      "fecha": "2026-07-13",
+      "lugar": "Cantal"
+    },
+    {
+      "fecha": "2026-07-20",
+      "lugar": "Haute Savoie"
+    }
+  ]
+}
