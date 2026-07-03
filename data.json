@@ -39,6 +39,26 @@
         "DECATHLON",
         "LIDL-TREK"
       ]
+    },
+    {
+      "id": "p-carlos-wt-17830983428390",
+      "nombre": "Carlos WT",
+      "corredores": [
+        "POGACAR",
+        "SEIXAS",
+        "PHILIPSEN",
+        "DEL TORO",
+        "VAN EETVELT",
+        "SEAN QUINN",
+        "ABRAHAMSEN",
+        "TRATNIK",
+        "SKUJINS"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
     }
   ],
   "resultados": [],
