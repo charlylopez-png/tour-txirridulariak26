@@ -1,5 +1,46 @@
 {
-  "participantes": [],
+  "participantes": [
+    {
+      "id": "p-titus-1-17830982178660",
+      "nombre": "Titus 1",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "TOM PIDCOCK",
+        "PHILIPSEN",
+        "DE LIE",
+        "ZIMMERMANN",
+        "ABRAHAMSEN",
+        "AZPARREN",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-titus-2-17830982178671",
+      "nombre": "Titus 2",
+      "corredores": [
+        "POGACAR",
+        "DEL TORO",
+        "SKJELMOSE",
+        "UIJTDEBROEKS",
+        "MERLIER",
+        "ACKERMANN",
+        "ABRAHAMSEN",
+        "AZPARREN",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "DECATHLON",
+        "LIDL-TREK"
+      ]
+    }
+  ],
   "resultados": [],
   "bonusFinal": null,
   "calendario": [
