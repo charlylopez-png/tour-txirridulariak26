@@ -599,6 +599,26 @@
         "INEOS",
         "LIDL-TREK"
       ]
+    },
+    {
+      "id": "p-carlos-wt-17830979787270",
+      "nombre": "Carlos WT",
+      "corredores": [
+        "POGACAR",
+        "SEIXAS",
+        "PHILIPSEN",
+        "DEL TORO",
+        "VAN EETVELT",
+        "SEAN QUINN",
+        "ABRAHAMSEN",
+        "TRATNIK",
+        "SKUJINS"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
     }
   ],
   "resultados": [],
