@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Porra Tour de Francia 2026</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="envolvente">
+  <div class="carretera"></div>
+  <header class="cabecera">
+    <div>
+      <h1 class="titulo-app">Porra <span>Tour de Francia</span> 2026</h1>
+      <div class="subtitulo" id="subtitulo-estado">Cargando datos...</div>
+    </div>
+    <div class="mini" id="fecha-actualizacion"></div>
+  </header>
+
+  <nav class="pestañas">
+    <button class="activa" data-tab="general">General</button>
+    <button data-tab="etapas">Por etapa</button>
+    <button data-tab="participante">Un participante</button>
+  </nav>
+
+  <div id="vista-general" class="vista">
+    <div class="tarjeta">
+      <h2>🏆 Clasificación general</h2>
+      <div id="tabla-general">Cargando…</div>
+    </div>
+  </div>
+
+  <div id="vista-etapas" class="vista" style="display:none">
+    <div class="tarjeta">
+      <h2>📅 Resultado por etapa</h2>
+      <div class="grid-form" style="margin-bottom:16px; max-width:320px;">
+        <select id="selector-etapa"></select>
+      </div>
+      <div id="detalle-etapa"></div>
+    </div>
+  </div>
+
+  <div id="vista-participante" class="vista" style="display:none">
+    <div class="tarjeta">
+      <h2>🔎 Ficha de participante</h2>
+      <div class="grid-form" style="margin-bottom:16px; max-width:320px;">
+        <select id="selector-participante"></select>
+      </div>
+      <div id="detalle-participante"></div>
+    </div>
+  </div>
+
+  <footer class="pie">Datos actualizados manualmente tras cada etapa · Tour de Francia 2026</footer>
+</div>
+
+<script src="motor-puntos.js"></script>
+<script>
+let DATOS = null;
+let CLASIFICACION = null;
+
+async function cargarDatos(){
+  try{
+    const res = await fetch('data.json?_=' + Date.now());
+    if(!res.ok) throw new Error('No se pudo cargar data.json');
+    DATOS = await res.json();
+    CLASIFICACION = calcularClasificacion(DATOS);
+    document.getElementById('subtitulo-estado').textContent =
+      `${DATOS.participantes.length} participantes · ${DATOS.resultados.length} etapa(s) registrada(s)${DATOS.bonusFinal ? ' · Tour finalizado' : ''}`;
+    document.getElementById('fecha-actualizacion').textContent =
+      DATOS.resultados.length ? `Última etapa: #${Math.max(...DATOS.resultados.map(r=>r.numero))}` : '';
+    pintarGeneral();
+    llenarSelectorEtapas();
+    llenarSelectorParticipantes();
+  }catch(e){
+    document.getElementById('subtitulo-estado').innerHTML =
+      `<span style="color:#ff9d9f">Error cargando datos: ${e.message}</span>`;
+  }
+}
+
+function medalla(pos){
+  if(pos===1) return '🥇';
+  if(pos===2) return '🥈';
+  if(pos===3) return '🥉';
+  return pos;
+}
+
+function pintarGeneral(){
+  const cont = document.getElementById('tabla-general');
+  if(!CLASIFICACION.length){ cont.innerHTML = '<p class="mini">Aún no hay participantes cargados.</p>'; return; }
+  let html = '<table><thead><tr><th></th><th>Participante</th><th>Corredores clave</th><th style="text-align:right">Puntos</th></tr></thead><tbody>';
+  CLASIFICACION.forEach(f=>{
+    const claseFila = f.posicion===1 ? 'fila-lider' : '';
+    const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
+    html += `<tr class="${claseFila}">
+      <td class="pos ${claseTop}">${medalla(f.posicion)}</td>
+      <td><strong>${f.nombre}</strong></td>
+      <td class="mini">${(f.corredores||[]).slice(0,3).join(' · ')}${f.corredores && f.corredores.length>3 ? '…' : ''}</td>
+      <td style="text-align:right" class="total-puntos">${f.total}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  cont.innerHTML = html;
+}
+
+function llenarSelectorEtapas(){
+  const sel = document.getElementById('selector-etapa');
+  const etapas = (DATOS.resultados||[]).slice().sort((a,b)=>a.numero-b.numero);
+  if(!etapas.length){ sel.innerHTML = '<option>No hay etapas registradas todavía</option>'; document.getElementById('detalle-etapa').innerHTML=''; return; }
+  sel.innerHTML = etapas.map(e=>`<option value="${e.numero}">Etapa ${e.numero}${e.nombre ? ' · '+e.nombre : ''}</option>`).join('');
+  sel.value = Math.max(...etapas.map(e=>e.numero));
+  sel.onchange = ()=>pintarEtapa(parseInt(sel.value));
+  pintarEtapa(parseInt(sel.value));
+}
+
+function pintarEtapa(numero){
+  const etapa = DATOS.resultados.find(r=>r.numero===numero);
+  const cont = document.getElementById('detalle-etapa');
+  if(!etapa){ cont.innerHTML=''; return; }
+
+  const filasDia = DATOS.participantes.map(p=>{
+    const {total, detalle} = puntosEtapaParticipante(p, etapa);
+    return {nombre:p.nombre, total, detalle};
+  }).sort((a,b)=>b.total-a.total);
+
+  let html = '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;">';
+  if(etapa.etapa?.length) html += `<span class="pastilla amarillo">🚴 Etapa: ${etapa.etapa[0]}</span>`;
+  if(etapa.general?.length) html += `<span class="pastilla amarillo">👑 Líder general: ${etapa.general[0]}</span>`;
+  if(etapa.puntos?.length) html += `<span class="pastilla verde">🟢 Líder puntos: ${etapa.puntos[0]}</span>`;
+  if(etapa.montana?.length) html += `<span class="pastilla lunares">🔴 Líder montaña: ${etapa.montana[0]}</span>`;
+  if(etapa.equipos?.length) html += `<span class="pastilla equipo">🚩 Líder equipos: ${etapa.equipos[0]}</span>`;
+  html += '</div>';
+
+  html += '<table><thead><tr><th></th><th>Participante</th><th style="text-align:right">Puntos del día</th></tr></thead><tbody>';
+  filasDia.forEach((f,i)=>{
+    html += `<tr><td class="pos">${i+1}</td><td>${f.nombre}</td><td style="text-align:right" class="total-puntos">${f.total}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  cont.innerHTML = html;
+}
+
+function llenarSelectorParticipantes(){
+  const sel = document.getElementById('selector-participante');
+  if(!DATOS.participantes.length){ sel.innerHTML = '<option>Sin participantes</option>'; return; }
+  sel.innerHTML = DATOS.participantes.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+  sel.onchange = ()=>pintarParticipante(sel.value);
+  pintarParticipante(sel.value);
+}
+
+function pintarParticipante(id){
+  const fila = CLASIFICACION.find(f=>f.id===id);
+  const cont = document.getElementById('detalle-participante');
+  if(!fila){ cont.innerHTML=''; return; }
+
+  let html = `<div style="margin-bottom:16px;">
+    <span class="pastilla amarillo">Posición ${fila.posicion}ª</span>
+    <span class="pastilla equipo">${fila.total} puntos totales</span>
+  </div>`;
+  html += `<p class="mini"><strong>Corredores:</strong> ${(fila.corredores||[]).join(' · ')}</p>`;
+  html += `<p class="mini"><strong>Equipos:</strong> ${(fila.equipos||[]).join(' · ')}</p>`;
+
+  if(fila.porEtapa.length){
+    html += '<table style="margin-top:14px"><thead><tr><th>Etapa</th><th style="text-align:right">Puntos día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
+    fila.porEtapa.forEach(e=>{
+      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre:''}</td><td style="text-align:right">${e.puntosDia}</td><td style="text-align:right" class="total-puntos">${e.acumulado}</td></tr>`;
+    });
+    html += '</tbody></table>';
+  } else {
+    html += '<p class="mini">Todavía no hay etapas puntuadas.</p>';
+  }
+
+  if(fila.puntosBonus>0){
+    html += `<p class="mini" style="margin-top:12px"><strong>Bonus clasificaciones finales:</strong> +${fila.puntosBonus} pts (${fila.detalleBonus.map(d=>d.nombre+' +'+d.puntos).join(', ')})</p>`;
+  }
+
+  cont.innerHTML = html;
+}
+
+document.querySelectorAll('nav.pestañas button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.pestañas button').forEach(b=>b.classList.remove('activa'));
+    btn.classList.add('activa');
+    document.querySelectorAll('.vista').forEach(v=>v.style.display='none');
+    document.getElementById('vista-'+btn.dataset.tab).style.display='block';
+  });
+});
+
+cargarDatos();
+</script>
+</body>
+</html>
