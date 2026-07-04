@@ -79,6 +79,66 @@
         "UAE",
         "LIDL-TREK"
       ]
+    },
+    {
+      "id": "p-txiki-17831451039490",
+      "nombre": "Txiki",
+      "corredores": [
+        "POGACAR",
+        "SEAN QUINN",
+        "MERLIER",
+        "DEL TORO",
+        "SEIXAS",
+        "OLIVEIRA",
+        "TURGIS",
+        "MAX KANTER",
+        "PLANCKAERT"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "VISMA"
+      ]
+    },
+    {
+      "id": "p-postobon-17831451039491",
+      "nombre": "POSTOBON",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "GANNA",
+        "DEL TORO",
+        "MATTHEWS",
+        "DE LIE",
+        "MAX KANTER",
+        "VERONA",
+        "SKUJINS"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-maik-17831451039502",
+      "nombre": "Maik",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "DEL TORO",
+        "LIPOWITZ",
+        "DEBRUYNE",
+        "MAX KANTER",
+        "ABRAHAMSEN",
+        "ASKEY",
+        "CHARMIG"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK"
+      ]
     }
   ],
   "resultados": [],
