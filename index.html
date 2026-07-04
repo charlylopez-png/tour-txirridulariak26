@@ -495,6 +495,9 @@ function pintarEtapa(numero){
   let html = '<p class="mini" style="margin-bottom:14px;">Listados oficiales tal cual se metieron, para poder contrastar con la fuente:</p>';
   html += '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:0 16px;">';
   html += listaCategoria('🚴 ETAPA', etapa.etapa, tabla.etapa, 'amarillo');
+  if(etapa.etapaEquipos && etapa.etapaEquipos.length){
+    html += listaCategoria('🚴 ETAPA (equipos · CRE)', etapa.etapaEquipos, tabla.etapa, 'amarillo');
+  }
   html += listaCategoria('🟢 REGULARIDAD', etapa.puntos, tabla.regularidadDiaria, 'verde');
   html += listaCategoria('🔴 KOM (montaña)', etapa.montana, tabla.montanaDiaria, 'lunares');
   html += listaCategoria('👑 GENERAL', etapa.general, tabla.generalDiaria, 'amarillo');

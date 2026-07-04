@@ -59,8 +59,13 @@ function puntosEtapaParticipante(participante, etapaResultado, tabla) {
 
   (participante.equipos || []).forEach((equipo) => {
     const pEquipo = puntosDeLista(etapaResultado.equipos, equipo, tabla.equiposDiaria);
-    if (pEquipo > 0) detalle.push({ nombre: equipo, puntos: pEquipo, tipo: "equipo" });
-    total += pEquipo;
+    // etapaEquipos: solo se usa en contrarrelojes por equipos (CRE), donde el
+    // resultado de la etapa en sí lo protagonizan los equipos, no corredores sueltos.
+    // Se puntúa con la escala grande de "etapa" (100/80/70...) en vez de la de equipos.
+    const pEtapaEquipo = puntosDeLista(etapaResultado.etapaEquipos, equipo, tabla.etapa);
+    const suma = pEquipo + pEtapaEquipo;
+    if (suma > 0) detalle.push({ nombre: equipo, puntos: suma, tipo: "equipo" });
+    total += suma;
   });
 
   return { total, detalle };
@@ -175,6 +180,12 @@ function rankingEquipos(datos){
       if(!mapa[key]) mapa[key] = { nombre, diaria:0, bonus:0 };
       mapa[key].diaria += tabla.equiposDiaria[idx];
     });
+    (r.etapaEquipos||[]).forEach((nombre, idx)=>{
+      if(idx >= tabla.etapa.length) return;
+      const key = normaliza(nombre);
+      if(!mapa[key]) mapa[key] = { nombre, diaria:0, bonus:0 };
+      mapa[key].diaria += tabla.etapa[idx];
+    });
   });
   if(bonusFinal){
     (bonusFinal.equipos||[]).forEach((nombre, idx)=>{
@@ -244,7 +255,8 @@ function detalleContribucionEtapa(participante, etapaResultado, tabla){
   });
   (participante.equipos || []).forEach(equipo => {
     const pEquipo = puntosDeLista(etapaResultado.equipos, equipo, tabla.equiposDiaria);
-    filas.push({ nombre: equipo, tipo: 'equipo', puntos: pEquipo });
+    const pEtapaEquipo = puntosDeLista(etapaResultado.etapaEquipos, equipo, tabla.etapa);
+    filas.push({ nombre: equipo, tipo: 'equipo', puntos: pEquipo + pEtapaEquipo });
   });
   filas.sort((a,b)=>b.puntos-a.puntos);
   return filas;

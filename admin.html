@@ -85,6 +85,11 @@
       <div class="tarjeta">
         <h2>📅 Resultados de la etapa</h2>
         <div class="aviso info">
+          <strong>⏱️ Si es una CONTRARRELOJ POR EQUIPOS (CRE):</strong> el resultado de la etapa lo protagonizan los equipos, no corredores sueltos.
+          Deja "Top 10 etapa (corredores)" vacío y rellena en su lugar "Top 10 etapa — EQUIPOS" con el orden de llegada de los equipos.
+          Se puntúa con la escala grande de etapa (100/80/70...), no con la pequeña de equipos.
+        </div>
+        <div class="aviso info">
           <strong>⚠️ Si esta es la ÚLTIMA etapa del Tour:</strong> rellena solo el "Top 10 etapa" (quién gana la etapa).
           Deja en blanco General, Puntos, Montaña y Equipos — esos ya no se puntúan como "líder del día" el último día.
           Las clasificaciones <strong>definitivas</strong> se meten aparte, en la pestaña "Bonus final".
@@ -102,8 +107,11 @@
           <input type="text" id="etapa-nombre" placeholder="Nombre / ciudad (opcional)">
         </div>
 
-        <h3 class="mini">🚴 Top 10 etapa (orden de llegada)</h3>
+        <h3 class="mini">🚴 Top 10 etapa (corredores — deja vacío si es CRE por equipos)</h3>
         <div class="grid-form" id="campos-etapa"></div>
+
+        <h3 class="mini" style="margin-top:14px">🚩 Top 10 etapa — EQUIPOS (solo si es contrarreloj por equipos, CRE)</h3>
+        <div class="grid-form" id="campos-etapa-equipos"></div>
 
         <h3 class="mini" style="margin-top:18px">👑 Top 10 clasificación general (tras esta etapa)</h3>
         <div class="grid-form" id="campos-general"></div>
@@ -573,6 +581,7 @@ async function guardarParticipantes(){
 // ============ ETAPA ============
 function construirCamposEtapa(){
   document.getElementById('campos-etapa').innerHTML = camposPosiciones('e-etapa-', 10);
+  document.getElementById('campos-etapa-equipos').innerHTML = camposPosiciones('e-etapaequipos-', 10, true);
   document.getElementById('campos-general').innerHTML = camposPosiciones('e-general-', 10);
   document.getElementById('campos-puntos').innerHTML = camposPosiciones('e-puntos-', 5);
   document.getElementById('campos-montana').innerHTML = camposPosiciones('e-montana-', 5);
@@ -636,6 +645,7 @@ function cargarEtapaExistente(silencioso){
   if(!etapa){ if(!silencioso) alert('No existe todavía esa etapa. Se creará una nueva al guardar.'); return; }
   document.getElementById('etapa-nombre').value = etapa.nombre || '';
   escribirCampos('e-etapa-', etapa.etapa);
+  escribirCampos('e-etapaequipos-', etapa.etapaEquipos);
   escribirCampos('e-general-', etapa.general);
   escribirCampos('e-puntos-', etapa.puntos);
   escribirCampos('e-montana-', etapa.montana);
@@ -648,16 +658,17 @@ async function guardarEtapa(){
   if(!numero){ aviso.innerHTML = '<div class="aviso error">Falta el número de etapa</div>'; return; }
 
   const rEtapa = leerCamposValidado('e-etapa-', 10, CORREDORES_MAESTRO, 'etapa');
+  const rEtapaEquipos = leerCamposValidado('e-etapaequipos-', 10, EQUIPOS_MAESTRO, 'etapa (equipos, CRE)');
   const rGeneral = leerCamposValidado('e-general-', 10, CORREDORES_MAESTRO, 'general');
   const rPuntos = leerCamposValidado('e-puntos-', 5, CORREDORES_MAESTRO, 'puntos');
   const rMontana = leerCamposValidado('e-montana-', 5, CORREDORES_MAESTRO, 'montaña');
   const rEquipos = leerCamposValidado('e-equipos-', 5, EQUIPOS_MAESTRO, 'equipos');
-  const todosErrores = [...rEtapa.errores, ...rGeneral.errores, ...rPuntos.errores, ...rMontana.errores, ...rEquipos.errores];
+  const todosErrores = [...rEtapa.errores, ...rEtapaEquipos.errores, ...rGeneral.errores, ...rPuntos.errores, ...rMontana.errores, ...rEquipos.errores];
   if(todosErrores.length){
     aviso.innerHTML = `<div class="aviso error"><strong>Corrige esto antes de guardar:</strong><br>${todosErrores.join('<br>')}</div>`;
     return;
   }
-  const todosAvisos = [...rEtapa.avisos, ...rGeneral.avisos, ...rPuntos.avisos, ...rMontana.avisos, ...rEquipos.avisos];
+  const todosAvisos = [...rEtapa.avisos, ...rEtapaEquipos.avisos, ...rGeneral.avisos, ...rPuntos.avisos, ...rMontana.avisos, ...rEquipos.avisos];
   if(todosAvisos.length){
     const continuar = confirm(`Hay ${todosAvisos.length} nombre(s) que no reconozco de tu lista de la porra (puede ser normal si ese corredor no fue elegible). Revisa por si acaso:\n\n${todosAvisos.join('\n')}\n\n¿Guardar de todas formas?`);
     if(!continuar) return;
@@ -667,6 +678,7 @@ async function guardarEtapa(){
     numero,
     nombre: document.getElementById('etapa-nombre').value.trim(),
     etapa: rEtapa.arr,
+    etapaEquipos: rEtapaEquipos.arr,
     general: rGeneral.arr,
     puntos: rPuntos.arr,
     montana: rMontana.arr,
