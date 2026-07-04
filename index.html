@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Porra Tour de Francia 2026</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="envolvente">
+
+  <div class="hero">
+    <img class="logo" src="assets/tour-logo.png" alt="Tour de France">
+    <div class="hero-texto">
+      <div class="fechas-tour">04 — 26 julio 2026 · 21 etapas</div>
+      <h1 class="titulo-app">TXIRRIDULARIAK<span>-TOUR-2026</span></h1>
+      <div class="subtitulo" id="subtitulo-estado">Cargando datos...</div>
+    </div>
+  </div>
+
+  <nav class="pestañas">
+    <button class="activa" data-tab="general">🏆 General</button>
+    <button data-tab="calendario">📅 Calendario</button>
+    <button data-tab="etapas">🚴 Por etapa</button>
+    <button data-tab="data">📊 Data</button>
+  </nav>
+
+  <div id="vista-general" class="vista">
+    <div class="tarjeta">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+        <h2 style="margin:0" id="titulo-clasificacion">🏆 Clasificación</h2>
+        <div style="display:flex; gap:8px;">
+          <button class="secundaria" id="btn-clas-general" onclick="cambiarClasificacion('general')">General</button>
+          <button class="secundaria" id="btn-clas-ultima" onclick="cambiarClasificacion('ultima')">Última etapa</button>
+        </div>
+      </div>
+      <div id="tabla-general">Cargando…</div>
+    </div>
+  </div>
+
+  <div id="vista-calendario" class="vista" style="display:none">
+    <div class="tarjeta">
+      <h2>📅 Recorrido — Tour de Francia 2026</h2>
+      <div id="lista-calendario" class="lista-calendario">Cargando…</div>
+    </div>
+  </div>
+
+  <div id="vista-etapas" class="vista" style="display:none">
+    <div class="tarjeta">
+      <h2>🚴 Resultado por etapa</h2>
+      <div class="grid-form" style="margin-bottom:16px; max-width:340px;">
+        <select id="selector-etapa"></select>
+      </div>
+      <div id="detalle-etapa"></div>
+    </div>
+  </div>
+
+  <div id="vista-data" class="vista" style="display:none">
+    <div class="tarjeta">
+      <div style="display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;">
+        <button class="secundaria" id="btn-data-kom" onclick="cambiarSubData('kom')">⛰️ KOM</button>
+        <button class="secundaria" id="btn-data-participantes" onclick="cambiarSubData('participantes')">👥 Participantes</button>
+        <button class="secundaria" id="btn-data-sistema" onclick="cambiarSubData('sistema')">📖 Sistema de puntos</button>
+      </div>
+
+      <div id="sub-data-kom" class="sub-data">
+        <h2 style="margin-top:0">⛰️ Ranking KOM — puntos por corredor</h2>
+        <p class="mini" style="margin-top:-8px; margin-bottom:14px;">Quién está sumando más puntos con los criterios de la porra, sea de quien sea su equipo fantasy.</p>
+        <div style="display:flex; gap:8px; margin-bottom:16px;">
+          <button class="secundaria" id="btn-kom-corredores" onclick="cambiarKom('corredores')">Corredores</button>
+          <button class="secundaria" id="btn-kom-equipos" onclick="cambiarKom('equipos')">Equipos</button>
+        </div>
+        <div id="tabla-kom">Cargando…</div>
+      </div>
+
+      <div id="sub-data-participantes" class="sub-data" style="display:none">
+        <h2 style="margin-top:0">👥 Ficha de participante</h2>
+        <div class="grid-form" style="margin-bottom:16px; max-width:320px;">
+          <select id="selector-participante"></select>
+        </div>
+        <div id="detalle-participante"></div>
+      </div>
+
+      <div id="sub-data-sistema" class="sub-data" style="display:none">
+        <h2 style="margin-top:0">📖 Sistema de puntuación</h2>
+        <div id="tabla-sistema">Cargando…</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="pie">Datos actualizados manualmente tras cada etapa · Tour de Francia 2026</footer>
+</div>
+
+<script src="maestros.js"></script>
+<script src="motor-puntos.js"></script>
+<script>
+let DATOS = null;
+let CLASIFICACION = null;
+let KOM_MODO = 'corredores';
+let SUB_DATA = 'kom';
+
+const ICONO_TIPO = {
+  contrarreloj_equipos: '⏱️',
+  contrarreloj_individual: '⏱️',
+  montana: '⛰️',
+  llana: '🏁',
+  ondulada: '〰️',
+};
+const NOMBRE_TIPO = {
+  contrarreloj_equipos: 'Contrarreloj por equipos',
+  contrarreloj_individual: 'Contrarreloj individual',
+  montana: 'Montaña',
+  llana: 'Llana',
+  ondulada: 'Ondulada',
+};
+
+async function cargarDatos(){
+  try{
+    const res = await fetch('data.json?_=' + Date.now());
+    if(!res.ok) throw new Error('No se pudo cargar data.json');
+    DATOS = await res.json();
+    CLASIFICACION = calcularClasificacion(DATOS);
+    document.getElementById('subtitulo-estado').textContent =
+      `${DATOS.participantes.length} participantes · ${DATOS.resultados.length} etapa(s) puntuada(s)${DATOS.bonusFinal ? ' · Tour finalizado' : ''}`;
+    pintarGeneral();
+    pintarKom();
+    pintarSistema();
+    pintarCalendario();
+    llenarSelectorEtapas();
+    llenarSelectorParticipantes();
+  }catch(e){
+    document.getElementById('subtitulo-estado').innerHTML =
+      `<span style="color:#ff9d9f">Error cargando datos: ${e.message}</span>`;
+  }
+}
+
+function medalla(pos){
+  if(pos===1) return '🥇';
+  if(pos===2) return '🥈';
+  if(pos===3) return '🥉';
+  return pos;
+}
+
+function precioDe(nombre){
+  const key = normaliza(nombre);
+  const encontrado = Object.keys(PRECIOS_CORREDORES).find(k => normaliza(k) === key);
+  return encontrado ? PRECIOS_CORREDORES[encontrado] : 0;
+}
+
+function corredoresPorValor(corredores){
+  return (corredores||[]).slice().sort((a,b)=>precioDe(b)-precioDe(a));
+}
+
+let MODO_CLASIFICACION = 'general';
+
+function cambiarClasificacion(modo){
+  MODO_CLASIFICACION = modo;
+  pintarGeneral();
+}
+
+function calcularPosicionesPrevias(){
+  if(!CLASIFICACION.length) return null;
+  const n = CLASIFICACION[0].porEtapa.length;
+  if(n < 2) return null;
+  const previos = CLASIFICACION.map(f => ({ id: f.id, acumuladoPrevio: f.porEtapa[n-2].acumulado }));
+  previos.sort((a,b)=> b.acumuladoPrevio - a.acumuladoPrevio);
+  const posMap = {};
+  previos.forEach((p,i)=> posMap[p.id] = i+1);
+  return posMap;
+}
+
+function flechaVariacion(actual, previa){
+  if(previa == null) return '';
+  const delta = previa - actual;
+  if(delta > 0) return `<span class="export-flecha subida">▲${delta}</span>`;
+  if(delta < 0) return `<span class="export-flecha bajada">▼${Math.abs(delta)}</span>`;
+  return `<span class="export-flecha" style="color:var(--texto-tenue)">·</span>`;
+}
+
+function etiquetaUltimaEtapa(){
+  const etapas = (DATOS.resultados||[]).slice().sort((a,b)=>a.numero-b.numero);
+  if(!etapas.length) return null;
+  const u = etapas[etapas.length-1];
+  return `Etapa ${u.numero}${u.nombre ? ' · '+u.nombre : ''}`;
+}
+
+function pintarGeneral(){
+  const btnG = document.getElementById('btn-clas-general');
+  const btnU = document.getElementById('btn-clas-ultima');
+  btnG.style.borderColor = MODO_CLASIFICACION==='general' ? 'var(--amarillo)' : '';
+  btnG.style.color = MODO_CLASIFICACION==='general' ? 'var(--amarillo)' : '';
+  btnU.style.borderColor = MODO_CLASIFICACION==='ultima' ? 'var(--amarillo)' : '';
+  btnU.style.color = MODO_CLASIFICACION==='ultima' ? 'var(--amarillo)' : '';
+
+  const titulo = document.getElementById('titulo-clasificacion');
+  const etiqueta = etiquetaUltimaEtapa();
+  if(MODO_CLASIFICACION === 'general'){
+    titulo.textContent = '🏆 General' + (etiqueta ? ' tras ' + etiqueta : '');
+  } else {
+    titulo.textContent = '🏆 ' + (etiqueta || 'Última etapa');
+  }
+
+  const cont = document.getElementById('tabla-general');
+  if(!CLASIFICACION.length){ cont.innerHTML = '<p class="mini">Aún no hay participantes cargados.</p>'; return; }
+
+  if(MODO_CLASIFICACION === 'general') pintarClasificacionGeneral(cont);
+  else pintarClasificacionUltimaEtapa(cont);
+}
+
+function pintarClasificacionGeneral(cont){
+  const posMap = calcularPosicionesPrevias();
+  let html = '<div class="lista-clasificacion">';
+  CLASIFICACION.forEach(f=>{
+    const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
+    const flecha = posMap ? flechaVariacion(f.posicion, posMap[f.id]) : '';
+    html += `<div class="export-fila fila-clicable ${claseTop}" onclick="toggleDetalleGeneral('${f.id}')">
+      <div class="export-rank">${f.posicion}</div>
+      <div class="export-nombre">${f.nombre}${flecha}</div>
+      <div class="export-puntos">${f.total}</div>
+    </div>
+    <div id="detalle-gen-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-gen-cont-${f.id}"></div></div>`;
+  });
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
+function toggleDetalleGeneral(id){
+  const fila = document.getElementById('detalle-gen-'+id);
+  const contDet = document.getElementById('detalle-gen-cont-'+id);
+  if(fila.style.display !== 'none'){ fila.style.display = 'none'; return; }
+  fila.style.display = 'block';
+  if(!contDet.dataset.cargado){
+    const participante = CLASIFICACION.find(f=>f.id===id);
+    const detalle = detalleContribucionGeneral(participante, DATOS);
+    let h = '<div class="desglose-equipo">';
+    detalle.forEach(d=>{
+      h += `<div class="fila-desglose"><span>${d.tipo==='equipo' ? '🚩' : '🚴'} ${d.nombre}</span><span class="total-puntos">${d.puntos}</span></div>`;
+    });
+    h += '</div>';
+    contDet.innerHTML = h;
+    contDet.dataset.cargado = '1';
+  }
+}
+
+function pintarClasificacionUltimaEtapa(cont){
+  const etapas = (DATOS.resultados||[]).slice().sort((a,b)=>a.numero-b.numero);
+  if(!etapas.length){ cont.innerHTML = '<p class="mini">Todavía no hay ninguna etapa puntuada.</p>'; return; }
+  const ultima = etapas[etapas.length-1];
+  const tabla = obtenerTablaPuntos(DATOS);
+  const filasDia = DATOS.participantes.map(p=>{
+    const {total, detalle} = puntosEtapaParticipante(p, ultima, tabla);
+    return {id:p.id, nombre:p.nombre, total, detalle};
+  }).sort((a,b)=>b.total-a.total);
+  filasDia.forEach((f,i)=>f.posicion=i+1);
+  window._ultimaEtapaFilas = filasDia;
+  window._ultimaEtapaObjeto = ultima;
+
+  let html = '<div class="lista-clasificacion">';
+  filasDia.forEach(f=>{
+    const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
+    html += `<div class="export-fila fila-clicable ${claseTop}" onclick="toggleDetalleUltima('${f.id}')">
+      <div class="export-rank">${f.posicion}</div>
+      <div class="export-nombre">${f.nombre}</div>
+      <div class="export-puntos">${f.total}</div>
+    </div>
+    <div id="detalle-ult-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-ult-cont-${f.id}"></div></div>`;
+  });
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
+function toggleDetalleUltima(id){
+  const fila = document.getElementById('detalle-ult-'+id);
+  const contDet = document.getElementById('detalle-ult-cont-'+id);
+  if(fila.style.display !== 'none'){ fila.style.display = 'none'; return; }
+  fila.style.display = 'block';
+  if(!contDet.dataset.cargado){
+    const participante = DATOS.participantes.find(p=>p.id===id);
+    const detalle = detalleContribucionEtapa(participante, window._ultimaEtapaObjeto, obtenerTablaPuntos(DATOS));
+    let h = '<div class="desglose-equipo">';
+    detalle.forEach(d=>{
+      h += `<div class="fila-desglose"><span>${d.tipo==='equipo' ? '🚩' : '🚴'} ${d.nombre}</span><span class="total-puntos">${d.puntos}</span></div>`;
+    });
+    h += '</div>';
+    contDet.innerHTML = h;
+    contDet.dataset.cargado = '1';
+  }
+}
+
+// ============ DATA: sub-navegación interna ============
+function cambiarSubData(sub){
+  SUB_DATA = sub;
+  ['kom','participantes','sistema'].forEach(s=>{
+    document.getElementById('sub-data-'+s).style.display = (s===sub) ? 'block' : 'none';
+    const btn = document.getElementById('btn-data-'+s);
+    btn.style.borderColor = (s===sub) ? 'var(--amarillo)' : '';
+    btn.style.color = (s===sub) ? 'var(--amarillo)' : '';
+  });
+}
+
+function cambiarKom(modo){
+  KOM_MODO = modo;
+  pintarKom();
+}
+
+function pintarKom(){
+  document.getElementById('btn-kom-corredores').style.borderColor = KOM_MODO==='corredores' ? 'var(--amarillo)' : '';
+  document.getElementById('btn-kom-corredores').style.color = KOM_MODO==='corredores' ? 'var(--amarillo)' : '';
+  document.getElementById('btn-kom-equipos').style.borderColor = KOM_MODO==='equipos' ? 'var(--amarillo)' : '';
+  document.getElementById('btn-kom-equipos').style.color = KOM_MODO==='equipos' ? 'var(--amarillo)' : '';
+
+  const cont = document.getElementById('tabla-kom');
+  if(!DATOS.resultados.length){
+    cont.innerHTML = '<p class="mini">Todavía no hay etapas puntuadas — el ranking aparecerá en cuanto metas la primera.</p>';
+    return;
+  }
+
+  if(KOM_MODO === 'corredores'){
+    const ranking = rankingCorredores(DATOS).slice(0, 40);
+    let html2 = '<table><thead><tr><th></th><th>Corredor</th><th class="mini" style="font-weight:400">Desglose</th><th style="text-align:right">Puntos</th></tr></thead><tbody>';
+    ranking.forEach(f=>{
+      const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
+      const desglose = [];
+      if(f.etapa) desglose.push(`🚴 ${f.etapa}`);
+      if(f.general) desglose.push(`👑 ${f.general}`);
+      if(f.puntos) desglose.push(`🟢 ${f.puntos}`);
+      if(f.montana) desglose.push(`🔴 ${f.montana}`);
+      if(f.bonus) desglose.push(`🏁 ${f.bonus}`);
+      html2 += `<tr class="${f.posicion===1?'fila-lider':''}">
+        <td class="pos ${claseTop}">${medalla(f.posicion)}</td>
+        <td><strong>${f.nombre}</strong></td>
+        <td class="mini">${desglose.join(' · ')}</td>
+        <td style="text-align:right" class="total-puntos">${f.total}</td>
+      </tr>`;
+    });
+    html2 += '</tbody></table>';
+    cont.innerHTML = html2;
+  } else {
+    const ranking = rankingEquipos(DATOS);
+    let html2 = '<table><thead><tr><th></th><th>Equipo</th><th class="mini" style="font-weight:400">Desglose</th><th style="text-align:right">Puntos</th></tr></thead><tbody>';
+    ranking.forEach(f=>{
+      const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
+      const desglose = [];
+      if(f.diaria) desglose.push(`🚩 diario ${f.diaria}`);
+      if(f.bonus) desglose.push(`🏁 final ${f.bonus}`);
+      html2 += `<tr class="${f.posicion===1?'fila-lider':''}">
+        <td class="pos ${claseTop}">${medalla(f.posicion)}</td>
+        <td><strong>${f.nombre}</strong></td>
+        <td class="mini">${desglose.join(' · ')}</td>
+        <td style="text-align:right" class="total-puntos">${f.total}</td>
+      </tr>`;
+    });
+    html2 += '</tbody></table>';
+    cont.innerHTML = html2;
+  }
+}
+
+// ============ SISTEMA DE PUNTOS (explicación pública) ============
+function filaPuntos(etiqueta, valores){
+  return `<div class="fila-etapa" style="grid-template-columns: 1fr; gap:6px; cursor:default;">
+    <div><strong>${etiqueta}</strong></div>
+    <div class="mini">${valores.map((v,i)=>`${i+1}º: ${v}`).join(' · ')}</div>
+  </div>`;
+}
+
+function pintarSistema(){
+  const cont = document.getElementById('tabla-sistema');
+  const tabla = obtenerTablaPuntos(DATOS);
+  let html = '';
+  html += '<h3 class="mini" style="text-transform:uppercase; letter-spacing:.4px; color:var(--texto); font-family:Oswald,sans-serif; margin-bottom:10px;">Cada etapa (se suma cada día)</h3>';
+  html += '<div class="lista-calendario" style="margin-bottom:22px;">';
+  html += filaPuntos('🚴 Etapa (top 10)', tabla.etapa);
+  html += filaPuntos('👑 Clasificación general (top 10)', tabla.generalDiaria);
+  html += filaPuntos('🟢 Regularidad / puntos (top 5)', tabla.regularidadDiaria);
+  html += filaPuntos('🔴 KOM / montaña (top 5)', tabla.montanaDiaria);
+  html += filaPuntos('🚩 Equipos (top 5)', tabla.equiposDiaria);
+  html += '</div>';
+
+  html += '<h3 class="mini" style="text-transform:uppercase; letter-spacing:.4px; color:var(--texto); font-family:Oswald,sans-serif; margin-bottom:10px;">Bonus final (solo una vez, al acabar el Tour)</h3>';
+  html += '<div class="lista-calendario">';
+  html += filaPuntos('👑 General final (top 10)', tabla.generalFinal);
+  html += filaPuntos('🟢 Regularidad final (top 5)', tabla.regularidadFinal);
+  html += filaPuntos('🔴 Montaña final (top 5)', tabla.montanaFinal);
+  html += filaPuntos('🚩 Equipos final (top 5)', tabla.equiposFinal);
+  html += '</div>';
+
+  html += `<div class="aviso info" style="margin-top:18px;">
+    <strong>⚠️ Regla de la última etapa:</strong> el día final de París solo puntúa la "Etapa" (quién gana esa etapa concreta).
+    General, Regularidad, KOM y Equipos ya no se puntúan como "líder del día" — en su lugar se aplica una única vez el
+    <strong>Bonus final</strong> con las clasificaciones definitivas del Tour.
+  </div>`;
+
+  cont.innerHTML = html;
+}
+
+function formateaFecha(iso){
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}`;
+}
+
+function pintarCalendario(){
+  const cont = document.getElementById('lista-calendario');
+  const calendario = DATOS.calendario || [];
+  const descansos = DATOS.descansos || [];
+  if(!calendario.length){ cont.innerHTML = '<p class="mini">Calendario no disponible.</p>'; return; }
+
+  const hoyISO = new Date().toISOString().slice(0,10);
+  const numerosConResultado = new Set((DATOS.resultados||[]).filter(r => r.etapa && r.etapa.length).map(r=>r.numero));
+
+  let html = '';
+  calendario.forEach((e, idx)=>{
+    if(idx > 0){
+      const anterior = calendario[idx-1];
+      const descansoEntreMedias = descansos.find(d => d.fecha > anterior.fecha && d.fecha < e.fecha);
+      if(descansoEntreMedias){
+        html += `<div class="fila-descanso">💤 Día de descanso · ${descansoEntreMedias.lugar}</div>`;
+      }
+    }
+
+    const esHoy = e.fecha === hoyISO;
+    const completada = numerosConResultado.has(e.numero);
+    let claseEstado = 'futura', textoEstado = 'Próxima';
+    if(esHoy){ claseEstado='hoy'; textoEstado='Hoy'; }
+    else if(completada){ claseEstado='hecha'; textoEstado='Completada'; }
+    else if(e.fecha < hoyISO){ claseEstado='hecha'; textoEstado='Disputada'; }
+
+    html += `<div class="fila-etapa ${esHoy?'es-hoy':''} ${completada?'completada':''}" onclick="irAEtapa(${e.numero})">
+      <div class="num-etapa">${e.numero}</div>
+      <div class="icono-tipo" title="${NOMBRE_TIPO[e.tipo]||''}">${ICONO_TIPO[e.tipo]||'🚴'}</div>
+      <div class="ruta">${e.salida} → ${e.meta}<span class="fecha">${e.dia} ${formateaFecha(e.fecha)} · ${NOMBRE_TIPO[e.tipo]||''}</span></div>
+      <div class="km">${e.km} km</div>
+      <div class="estado ${claseEstado}">${textoEstado}</div>
+    </div>`;
+  });
+  cont.innerHTML = html;
+}
+
+// Clic en una etapa del calendario → salta a "Por etapa" con esa jornada ya seleccionada
+function irAEtapa(numero){
+  const existe = DATOS.resultados.some(r => r.numero === numero);
+  cambiarPestaña('etapas');
+  if(existe){
+    const sel = document.getElementById('selector-etapa');
+    sel.value = numero;
+    pintarEtapa(numero);
+  } else {
+    document.getElementById('detalle-etapa').innerHTML =
+      `<p class="mini">Todavía no se han metido resultados para la etapa ${numero}. En cuanto el admin los publique, aparecerán aquí.</p>`;
+  }
+}
+
+function llenarSelectorEtapas(){
+  const sel = document.getElementById('selector-etapa');
+  const etapas = (DATOS.resultados||[]).slice().sort((a,b)=>a.numero-b.numero);
+  if(!etapas.length){ sel.innerHTML = '<option>No hay etapas registradas todavía</option>'; document.getElementById('detalle-etapa').innerHTML=''; return; }
+  sel.innerHTML = etapas.map(e=>`<option value="${e.numero}">Etapa ${e.numero}${e.nombre ? ' · '+e.nombre : ''}</option>`).join('');
+  sel.value = Math.max(...etapas.map(e=>e.numero));
+  sel.onchange = ()=>pintarEtapa(parseInt(sel.value));
+  pintarEtapa(parseInt(sel.value));
+}
+
+// Muestra una lista oficial (top10/top5) con posición, nombre y puntos otorgados,
+// para poder contrastar contra la fuente (letour.fr / procyclingstats) de un vistazo.
+function listaCategoria(titulo, lista, tabla, claseColor){
+  if(!lista || !lista.length){
+    return `<div class="tarjeta" style="padding:14px 16px; margin-bottom:12px;">
+      <div class="pastilla ${claseColor}" style="margin-bottom:8px;">${titulo}</div>
+      <p class="mini" style="margin:0;">Sin datos para esta etapa.</p>
+    </div>`;
+  }
+  let filas = lista.map((nombre, idx)=>{
+    const pts = idx < tabla.length ? tabla[idx] : 0;
+    return `<tr><td class="pos">${idx+1}</td><td>${nombre}</td><td style="text-align:right" class="total-puntos">${pts>0?'+'+pts:'—'}</td></tr>`;
+  }).join('');
+  return `<div class="tarjeta" style="padding:14px 16px; margin-bottom:12px;">
+    <div class="pastilla ${claseColor}" style="margin-bottom:10px;">${titulo}</div>
+    <table><tbody>${filas}</tbody></table>
+  </div>`;
+}
+
+function pintarEtapa(numero){
+  const etapa = DATOS.resultados.find(r=>r.numero===numero);
+  const cont = document.getElementById('detalle-etapa');
+  if(!etapa){ cont.innerHTML=''; return; }
+  const tabla = obtenerTablaPuntos(DATOS);
+  window._etapaActualObjeto = etapa;
+
+  const filasDia = DATOS.participantes.map(p=>{
+    const {total} = puntosEtapaParticipante(p, etapa, tabla);
+    return {id:p.id, nombre:p.nombre, total};
+  }).sort((a,b)=>b.total-a.total);
+  filasDia.forEach((f,i)=>f.posicion=i+1);
+
+  let html = '<p class="mini" style="margin-bottom:14px;">Listados oficiales tal cual se metieron, para poder contrastar con la fuente:</p>';
+  html += '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:0 16px;">';
+  html += listaCategoria('🚴 ETAPA', etapa.etapa, tabla.etapa, 'amarillo');
+  html += listaCategoria('🟢 REGULARIDAD', etapa.puntos, tabla.regularidadDiaria, 'verde');
+  html += listaCategoria('🔴 KOM (montaña)', etapa.montana, tabla.montanaDiaria, 'lunares');
+  html += listaCategoria('👑 GENERAL', etapa.general, tabla.generalDiaria, 'amarillo');
+  html += listaCategoria('🚩 EQUIPOS', etapa.equipos, tabla.equiposDiaria, 'equipo');
+  html += '</div>';
+
+  html += `<h3 style="text-transform:uppercase; letter-spacing:.4px; color:var(--texto); font-family:Oswald,sans-serif; font-size:15px; margin:20px 0 10px;">🏆 Etapa ${etapa.numero}${etapa.nombre ? ' · '+etapa.nombre : ''} — clasificación de la porra</h3>`;
+  html += '<div class="lista-clasificacion">';
+  filasDia.forEach(f=>{
+    const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
+    html += `<div class="export-fila fila-clicable ${claseTop}" onclick="toggleDetallePorEtapa('${f.id}')">
+      <div class="export-rank">${f.posicion}</div>
+      <div class="export-nombre">${f.nombre}</div>
+      <div class="export-puntos">${f.total}</div>
+    </div>
+    <div id="detalle-pe-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-pe-cont-${f.id}"></div></div>`;
+  });
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
+function toggleDetallePorEtapa(id){
+  const fila = document.getElementById('detalle-pe-'+id);
+  const contDet = document.getElementById('detalle-pe-cont-'+id);
+  if(fila.style.display !== 'none'){ fila.style.display = 'none'; return; }
+  fila.style.display = 'block';
+  if(!contDet.dataset.cargado){
+    const participante = DATOS.participantes.find(p=>p.id===id);
+    const detalle = detalleContribucionEtapa(participante, window._etapaActualObjeto, obtenerTablaPuntos(DATOS));
+    let h = '<div class="desglose-equipo">';
+    detalle.forEach(d=>{
+      h += `<div class="fila-desglose"><span>${d.tipo==='equipo' ? '🚩' : '🚴'} ${d.nombre}</span><span class="total-puntos">${d.puntos}</span></div>`;
+    });
+    h += '</div>';
+    contDet.innerHTML = h;
+    contDet.dataset.cargado = '1';
+  }
+}
+
+function llenarSelectorParticipantes(){
+  const sel = document.getElementById('selector-participante');
+  if(!DATOS.participantes.length){ sel.innerHTML = '<option>Sin participantes</option>'; return; }
+  sel.innerHTML = DATOS.participantes.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+  sel.onchange = ()=>pintarParticipante(sel.value);
+  pintarParticipante(sel.value);
+}
+
+function pintarParticipante(id){
+  const fila = CLASIFICACION.find(f=>f.id===id);
+  const cont = document.getElementById('detalle-participante');
+  if(!fila){ cont.innerHTML=''; return; }
+
+  let html = `<div style="margin-bottom:16px;">
+    <span class="pastilla amarillo">Posición ${fila.posicion}ª</span>
+    <span class="pastilla equipo">${fila.total} puntos totales</span>
+  </div>`;
+  html += `<p class="mini"><strong>Corredores:</strong> ${corredoresPorValor(fila.corredores).join(' · ')}</p>`;
+  html += `<p class="mini"><strong>Equipos:</strong> ${(fila.equipos||[]).join(' · ')}</p>`;
+
+  if(fila.porEtapa.length){
+    html += '<table style="margin-top:14px"><thead><tr><th>Etapa</th><th style="text-align:right">Puntos día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
+    fila.porEtapa.forEach(e=>{
+      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre:''}</td><td style="text-align:right">${e.puntosDia}</td><td style="text-align:right" class="total-puntos">${e.acumulado}</td></tr>`;
+    });
+    html += '</tbody></table>';
+  } else {
+    html += '<p class="mini">Todavía no hay etapas puntuadas.</p>';
+  }
+
+  if(fila.puntosBonus>0){
+    html += `<p class="mini" style="margin-top:12px"><strong>Bonus clasificaciones finales:</strong> +${fila.puntosBonus} pts (${fila.detalleBonus.map(d=>d.nombre+' +'+d.puntos).join(', ')})</p>`;
+  }
+
+  cont.innerHTML = html;
+}
+
+function cambiarPestaña(tab){
+  document.querySelectorAll('nav.pestañas button').forEach(b=>{
+    b.classList.toggle('activa', b.dataset.tab === tab);
+  });
+  document.querySelectorAll('.vista').forEach(v=>v.style.display='none');
+  document.getElementById('vista-'+tab).style.display='block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.querySelectorAll('nav.pestañas button').forEach(btn=>{
+  btn.addEventListener('click', ()=> cambiarPestaña(btn.dataset.tab));
+});
+
+cambiarSubData('kom');
+cargarDatos();
+</script>
+</body>
+</html>
