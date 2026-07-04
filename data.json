@@ -825,7 +825,20 @@
     {
       "numero": 1,
       "nombre": "Barcelona → Barcelona",
-      "etapa": [
+      "etapa": [],
+      "etapaEquipos": [
+        "VISMA",
+        "INEOS",
+        "UAE",
+        "LIDL-TREK",
+        "RED BULL",
+        "DECATHLON",
+        "ALPECIN",
+        "FDJ",
+        "BAHRAIN",
+        "JAYCO ALULA"
+      ],
+      "general": [
         "VINGEGAARD",
         "GANNA",
         "POGACAR",
@@ -837,9 +850,20 @@
         "TOBIAS FOSS",
         "SEIXAS"
       ],
-      "general": [],
-      "puntos": [],
-      "montana": [],
+      "puntos": [
+        "BERNAL",
+        "VAUQUELIN",
+        "KWIATKOWSKI",
+        "DORIAN GODON",
+        "ARENSMAN"
+      ],
+      "montana": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "GANNA",
+        "R GREGOIRE"
+      ],
       "equipos": [
         "INEOS",
         "VISMA",
