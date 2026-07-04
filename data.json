@@ -319,6 +319,486 @@
         "RED BULL",
         "VISMA"
       ]
+    },
+    {
+      "id": "p-jca-17831744985150",
+      "nombre": "JCA",
+      "corredores": [
+        "POGACAR",
+        "SEIXAS",
+        "LIPOWITZ",
+        "PHILIPSEN",
+        "GANNA",
+        "TURGIS",
+        "ABRAHAMSEN",
+        "MAX KANTER",
+        "SKUJINS"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-pogacar-17831744985151",
+      "nombre": "Pogacar",
+      "corredores": [
+        "POGACAR",
+        "LIPOWITZ",
+        "PHILIPSEN",
+        "TOBIAS JOHANNESSEN",
+        "TOM PIDCOCK",
+        "FRETIN",
+        "DE KLEIJN",
+        "MAX KANTER",
+        "ABRAHAMSEN"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "VISMA"
+      ]
+    },
+    {
+      "id": "p-ibon-izaguirre-17831744985162",
+      "nombre": "Ibon Izaguirre",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "TOM PIDCOCK",
+        "MATTHEWS",
+        "STUYVEN",
+        "IZAGUIRRE",
+        "MAX KANTER",
+        "ABRAHAMSEN"
+      ],
+      "equipos": [
+        "UAE",
+        "LIDL-TREK",
+        "VISMA"
+      ]
+    },
+    {
+      "id": "p-endurance-17831744985163",
+      "nombre": "Endurance",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "LENNY MTNZ",
+        "TEJADA",
+        "JORDAN JEGAT",
+        "BERWICK",
+        "MAX KANTER",
+        "ANDERS JOHANNESSEN"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-mmga-17831744985164",
+      "nombre": "MMGA",
+      "corredores": [
+        "POGACAR",
+        "PHILIPSEN",
+        "SEIXAS",
+        "CARAPAZ",
+        "VAN EETVELT",
+        "ACKERMANN",
+        "CHRIS HARPER",
+        "SEAN QUINN",
+        "ANDERS JOHANNESSEN"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-katxiporreta-17831744985165",
+      "nombre": "Katxiporreta",
+      "corredores": [
+        "POGACAR",
+        "TEJADA",
+        "TOBIAS JOHANNESSEN",
+        "VAN DER POEL",
+        "MERLIER",
+        "LENNY MTNZ",
+        "JORDAN JEGAT",
+        "CHRIS HARPER",
+        "BERWICK"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-minimarti-17831744985166",
+      "nombre": "Minimarti",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "PHILIPSEN",
+        "GANNA",
+        "VAN DER POEL",
+        "CEPEDA",
+        "TARLING",
+        "MAX KANTER",
+        "BIERMANS"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-manolo-17831744985167",
+      "nombre": "Manolo",
+      "corredores": [
+        "POGACAR",
+        "EVENEPOEL",
+        "AYUSO",
+        "DORIAN GODON",
+        "WAERENSKJOLD",
+        "RICCITELLO",
+        "JORDAN JEGAT",
+        "BALDERSTONE",
+        "BERWICK"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-arabako-17831744985168",
+      "nombre": "Arabako",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "PHILIPSEN",
+        "MERLIER",
+        "MAX KANTER",
+        "ABRAHAMSEN",
+        "ACKERMANN",
+        "J F PARRA",
+        "POLITT"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-ikas-17831744985169",
+      "nombre": "Ikas",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "TOM PIDCOCK",
+        "DORIAN GODON",
+        "BRAZ AFONSO",
+        "MAX KANTER",
+        "VERCHER",
+        "BERCKMOES"
+      ],
+      "equipos": [
+        "UAE",
+        "INEOS",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-imanol-178317449851610",
+      "nombre": "Imanol",
+      "corredores": [
+        "POGACAR",
+        "PHILIPSEN",
+        "LIPOWITZ",
+        "TOBIAS JOHANNESSEN",
+        "TOM PIDCOCK",
+        "CARUSO",
+        "VAN EETVELT",
+        "ABRAHAMSEN",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-aupa-jon--178317449851711",
+      "nombre": "Aupa Jon!",
+      "corredores": [
+        "POGACAR",
+        "LIPOWITZ",
+        "PHILIPSEN",
+        "CARAPAZ",
+        "TOM PIDCOCK",
+        "CARUSO",
+        "JORDAN JEGAT",
+        "IZAGUIRRE",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-cote-de-pike-178317449851712",
+      "nombre": "Cote de Pike",
+      "corredores": [
+        "VINGEGAARD",
+        "SEIXAS",
+        "EVENEPOEL",
+        "PEDERSEN",
+        "VAN DER POEL",
+        "GANNA",
+        "J F PARRA",
+        "BARGUIL",
+        "AZPARREN"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-juanjo-178317449851713",
+      "nombre": "Juanjo",
+      "corredores": [
+        "POGACAR",
+        "SEIXAS",
+        "LIPOWITZ",
+        "MERLIER",
+        "JORDAN JEGAT",
+        "IZAGUIRRE",
+        "FRIGO",
+        "BALDERSTONE",
+        "VEISTROFFER"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "DECATHLON"
+      ]
+    },
+    {
+      "id": "p-la-lejana-178317449851714",
+      "nombre": "La Lejana",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "MERLIER",
+        "LENNY MTNZ",
+        "TOM PIDCOCK",
+        "STEWART",
+        "MAX KANTER",
+        "J F PARRA",
+        "AZPARREN"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-jordi-quixano-178317449851715",
+      "nombre": "Jordi Quixano",
+      "corredores": [
+        "POGACAR",
+        "SEIXAS",
+        "V PARET PEINTRE",
+        "LENNY MTNZ",
+        "G MARTIN",
+        "KOOIJ",
+        "MAX KANTER",
+        "ABRAHAMSEN",
+        "JORDAN JEGAT"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-maeztu-178317449851716",
+      "nombre": "Maeztu",
+      "corredores": [
+        "VINGEGAARD",
+        "SEIXAS",
+        "DEL TORO",
+        "LIPOWITZ",
+        "PHILIPSEN",
+        "MAX KANTER",
+        "ABRAHAMSEN",
+        "OLDANI",
+        "J F PARRA"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-alex-loidi-178317449851717",
+      "nombre": "Alex Loidi",
+      "corredores": [
+        "POGACAR",
+        "AYUSO",
+        "DEL TORO",
+        "MERLIER",
+        "ACKERMANN",
+        "IZAGUIRRE",
+        "RAÚL G PIERNA",
+        "VERONA",
+        "MEURISSE"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-seixas-178317449851718",
+      "nombre": "Seixas",
+      "corredores": [
+        "VINGEGAARD",
+        "SEIXAS",
+        "DEL TORO",
+        "PHILIPSEN",
+        "TOM PIDCOCK",
+        "FRETIN",
+        "DE KLEIJN",
+        "ABRAHAMSEN",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-lolo-1-178317449851719",
+      "nombre": "Lolo 1",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "PHILIPSEN",
+        "TOBIAS JOHANNESSEN",
+        "RICCITELLO",
+        "JORDAN JEGAT",
+        "J F PARRA",
+        "ABRAHAMSEN",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-lolo-2-178317449851720",
+      "nombre": "lolo 2",
+      "corredores": [
+        "VINGEGAARD",
+        "SEIXAS",
+        "DEL TORO",
+        "LIPOWITZ",
+        "TOM PIDCOCK",
+        "VAN EETVELT",
+        "ACKERMANN",
+        "MAX KANTER",
+        "ABRAHAMSEN"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-jone-parayuelo-178317449851821",
+      "nombre": "Jone Parayuelo",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "LIPOWITZ",
+        "PHILIPSEN",
+        "JORDAN JEGAT",
+        "BERWICK",
+        "J F PARRA",
+        "MAX KANTER",
+        "BERCKMOES"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-markelinho-178317449851822",
+      "nombre": "Markelinho",
+      "corredores": [
+        "POGACAR",
+        "AYUSO",
+        "PHILIPSEN",
+        "BEN HEALY",
+        "DORIAN GODON",
+        "R GREGOIRE",
+        "RICCITELLO",
+        "ABRAHAMSEN",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-kalitrontxo-178317449851823",
+      "nombre": "Kalitrontxo",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "SEIXAS",
+        "UIJTDEBROEKS",
+        "GANNA",
+        "ASKEY",
+        "J F PARRA",
+        "MAX KANTER",
+        "BRAZ AFONSO"
+      ],
+      "equipos": [
+        "UAE",
+        "INEOS",
+        "RED BULL"
+      ]
     }
   ],
   "resultados": [],
