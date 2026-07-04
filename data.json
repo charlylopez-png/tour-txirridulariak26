@@ -821,7 +821,34 @@
       ]
     }
   ],
-  "resultados": [],
+  "resultados": [
+    {
+      "numero": 1,
+      "nombre": "Barcelona → Barcelona",
+      "etapa": [
+        "VINGEGAARD",
+        "GANNA",
+        "POGACAR",
+        "AYUSO",
+        "EVENEPOEL",
+        "DEL TORO",
+        "PIGANZOLI",
+        "LIPOWITZ",
+        "TOBIAS FOSS",
+        "SEIXAS"
+      ],
+      "general": [],
+      "puntos": [],
+      "montana": [],
+      "equipos": [
+        "INEOS",
+        "VISMA",
+        "RED BULL",
+        "LIDL-TREK",
+        "UAE"
+      ]
+    }
+  ],
   "bonusFinal": null,
   "calendario": [
     {
