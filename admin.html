@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Admin · Porra Tour de Francia 2026</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="estilo.css">
+<datalist id="lista-corredores"></datalist>
+<datalist id="lista-equipos"></datalist>
+</head>
+<body>
+<div class="envolvente">
+  <div class="hero">
+    <img class="logo" src="assets/tour-logo.png" alt="Tour de France">
+    <div class="hero-texto">
+      <div class="fechas-tour">Panel privado</div>
+      <h1 class="titulo-app">Panel <span>Admin</span></h1>
+      <div class="subtitulo">Solo tú deberías tener este enlace y tu token de GitHub · <a href="index.html" style="color:var(--amarillo)">Ver clasificación pública →</a></div>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE ACCESO -->
+  <div id="pantalla-acceso" class="tarjeta" style="max-width:420px">
+    <h2>🔒 Acceso</h2>
+    <p class="mini">Este candado es solo para que un curioso no toque el panel por error. La protección real es tu token de GitHub, que nadie más tiene.</p>
+    <input type="password" id="campo-password" placeholder="Contraseña de admin" style="width:100%; margin:10px 0;">
+    <button class="accion" onclick="comprobarAcceso()">Entrar</button>
+    <div id="aviso-acceso"></div>
+  </div>
+
+  <!-- PANEL PRINCIPAL (oculto hasta login) -->
+  <div id="panel-principal" style="display:none">
+
+    <div class="tarjeta">
+      <h2>⚙️ Configuración de GitHub</h2>
+      <p class="mini">Se guarda solo en este navegador (localStorage), nunca se sube al repositorio.</p>
+      <div class="grid-form">
+        <input type="text" id="cfg-owner" placeholder="usuario de GitHub (ej: charlylopez-png)">
+        <input type="text" id="cfg-repo" placeholder="nombre del repositorio">
+        <input type="text" id="cfg-branch" placeholder="rama (main)" value="main">
+        <input type="text" id="cfg-path" placeholder="ruta al data.json" value="data.json">
+        <input type="password" id="cfg-token" placeholder="token de GitHub (ghp_...)">
+      </div>
+      <div style="margin-top:12px; display:flex; gap:10px;">
+        <button class="accion" onclick="guardarConfig()">Guardar configuración</button>
+        <button class="secundaria" onclick="probarConexion()">Probar conexión</button>
+      </div>
+      <div id="aviso-config"></div>
+    </div>
+
+    <nav class="pestañas">
+      <button class="activa" data-tab="participantes">Participantes</button>
+      <button data-tab="etapa">Añadir etapa</button>
+      <button data-tab="final">Bonus final</button>
+      <button data-tab="puntuacion">Puntuación</button>
+    </nav>
+
+    <!-- PARTICIPANTES -->
+    <div id="vista-participantes" class="vista">
+      <div class="tarjeta">
+        <h2>👥 Importar participantes (pegar lista)</h2>
+        <p class="mini">Un participante por línea, con este formato — separa con punto y coma:<br>
+        <code>Nombre; corredor1,corredor2,corredor3,corredor4,corredor5,corredor6,corredor7,corredor8,corredor9; equipo1,equipo2,equipo3</code></p>
+        <div id="aviso-editando"></div>
+        <textarea id="texto-import" rows="8" style="width:100%; background:var(--asfalto-3); color:var(--texto); border:1px solid var(--linea); border-radius:8px; padding:10px; font-family:monospace; font-size:13px;" placeholder="Carlos; POGACAR,SEIXAS,MERLIER,CARAPAZ,VAN EETVELT,GANNA,CORT NIELSEN,HOOLE,SKUJINS; UAE,RED BULL,VISMA"></textarea>
+        <div style="margin-top:10px; display:flex; gap:10px;">
+          <button class="accion" onclick="previsualizarImport()">Previsualizar</button>
+        </div>
+        <div id="preview-import" style="margin-top:14px"></div>
+      </div>
+
+      <div class="tarjeta">
+        <h2>📋 Participantes actuales (<span id="conteo-participantes">0</span>)</h2>
+        <div id="tabla-participantes-admin">Cargando…</div>
+        <button class="accion" style="margin-top:14px" onclick="guardarParticipantes()">Guardar cambios en GitHub</button>
+        <div id="aviso-participantes"></div>
+      </div>
+    </div>
+
+    <!-- ETAPA -->
+    <div id="vista-etapa" class="vista" style="display:none">
+      <div class="tarjeta">
+        <h2>📅 Resultados de la etapa</h2>
+        <div class="aviso info">
+          <strong>⚠️ Si esta es la ÚLTIMA etapa del Tour:</strong> rellena solo el "Top 10 etapa" (quién gana la etapa).
+          Deja en blanco General, Puntos, Montaña y Equipos — esos ya no se puntúan como "líder del día" el último día.
+          Las clasificaciones <strong>definitivas</strong> se meten aparte, en la pestaña "Bonus final".
+        </div>
+        <div class="grid-form" style="max-width:340px; margin-bottom:12px;">
+          <select id="selector-calendario" onchange="elegirEtapaCalendario()"></select>
+        </div>
+        <div class="grid-form" style="max-width:500px; margin-bottom:18px;">
+          <input type="number" id="etapa-numero" placeholder="Nº de etapa" min="1">
+          <input type="text" id="etapa-nombre" placeholder="Nombre / ciudad (opcional)">
+        </div>
+
+        <h3 class="mini">🚴 Top 10 etapa (orden de llegada)</h3>
+        <div class="grid-form" id="campos-etapa"></div>
+
+        <h3 class="mini" style="margin-top:18px">👑 Top 10 clasificación general (tras esta etapa)</h3>
+        <div class="grid-form" id="campos-general"></div>
+
+        <h3 class="mini" style="margin-top:18px">🟢 Top 5 clasificación por puntos</h3>
+        <div class="grid-form" id="campos-puntos"></div>
+
+        <h3 class="mini" style="margin-top:18px">🔴 Top 5 clasificación de montaña</h3>
+        <div class="grid-form" id="campos-montana"></div>
+
+        <h3 class="mini" style="margin-top:18px">🚩 Top 5 clasificación por equipos</h3>
+        <div class="grid-form" id="campos-equipos"></div>
+
+        <div style="margin-top:20px; display:flex; gap:10px;">
+          <button class="accion" onclick="guardarEtapa()">Guardar y publicar etapa</button>
+          <button class="secundaria" onclick="cargarEtapaExistente()">Cargar etapa existente para editar</button>
+        </div>
+        <div id="aviso-etapa"></div>
+      </div>
+    </div>
+
+    <!-- BONUS FINAL -->
+    <div id="vista-final" class="vista" style="display:none">
+      <div class="tarjeta">
+        <h2>🏁 Clasificaciones finales del Tour (una sola vez, al acabar)</h2>
+        <p class="mini">Esto añade el premio gordo de la clasificación final. Rellénalo solo cuando el Tour haya terminado.</p>
+
+        <h3 class="mini">👑 Top 10 general final</h3>
+        <div class="grid-form" id="campos-final-general"></div>
+
+        <h3 class="mini" style="margin-top:18px">🟢 Top 5 puntos final</h3>
+        <div class="grid-form" id="campos-final-puntos"></div>
+
+        <h3 class="mini" style="margin-top:18px">🔴 Top 5 montaña final</h3>
+        <div class="grid-form" id="campos-final-montana"></div>
+
+        <h3 class="mini" style="margin-top:18px">🚩 Top 5 equipos final</h3>
+        <div class="grid-form" id="campos-final-equipos"></div>
+
+        <div style="margin-top:20px;">
+          <button class="accion" onclick="guardarBonusFinal()">Guardar bonus final y publicar</button>
+        </div>
+        <div id="aviso-final"></div>
+      </div>
+    </div>
+
+    <!-- PUNTUACIÓN -->
+    <div id="vista-puntuacion" class="vista" style="display:none">
+      <div class="tarjeta">
+        <h2>📖 Sistema de puntuación</h2>
+        <p class="mini">Esta es la tabla que usa el motor de cálculo para todo. Sirve para revisarla y, si algo no cuadra en la general, comprobar aquí que los valores son los correctos antes de dudar de otra cosa. Puedes editarla si de verdad cambia alguna regla — se aplicará con efecto retroactivo a todas las etapas ya metidas.</p>
+        <div id="editor-puntuacion">Cargando…</div>
+        <div style="margin-top:16px; display:flex; gap:10px;">
+          <button class="accion" onclick="guardarTablaPuntos()">Guardar cambios de puntuación</button>
+          <button class="secundaria" onclick="restablecerTablaPuntos()">Restablecer a los valores originales</button>
+        </div>
+        <div id="aviso-puntuacion"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="maestros.js"></script>
+<script src="motor-puntos.js"></script>
+<script>
+// ============ CONFIG SENCILLA ============
+// Cambia esta contraseña antes de publicar el panel. No es seguridad real,
+// solo un filtro para que nadie entre por error. La seguridad real es tu token.
+const PASSWORD_ADMIN = "tour2026";
+
+const CALENDARIO_2026 = [
+  {"numero":1,"tipo":"contrarreloj_equipos","fecha":"2026-07-04","dia":"Sáb","salida":"Barcelona","meta":"Barcelona","km":19.6},
+  {"numero":2,"tipo":"ondulada","fecha":"2026-07-05","dia":"Dom","salida":"Tarragona","meta":"Barcelona","km":168.5},
+  {"numero":3,"tipo":"montana","fecha":"2026-07-06","dia":"Lun","salida":"Granollers","meta":"Les Angles","km":195.9},
+  {"numero":4,"tipo":"ondulada","fecha":"2026-07-07","dia":"Mar","salida":"Carcassonne","meta":"Foix","km":181.9},
+  {"numero":5,"tipo":"llana","fecha":"2026-07-08","dia":"Mié","salida":"Lannemezan","meta":"Pau","km":158.3},
+  {"numero":6,"tipo":"montana","fecha":"2026-07-09","dia":"Jue","salida":"Pau","meta":"Gavarnie Gèdre","km":186.2},
+  {"numero":7,"tipo":"llana","fecha":"2026-07-10","dia":"Vie","salida":"Hagetmau","meta":"Bordeaux","km":175.1},
+  {"numero":8,"tipo":"llana","fecha":"2026-07-11","dia":"Sáb","salida":"Périgueux","meta":"Bergerac","km":180.4},
+  {"numero":9,"tipo":"ondulada","fecha":"2026-07-12","dia":"Dom","salida":"Malemort","meta":"Ussel","km":185.5},
+  {"numero":10,"tipo":"montana","fecha":"2026-07-14","dia":"Mar","salida":"Aurillac","meta":"Le Lioran","km":166.6},
+  {"numero":11,"tipo":"llana","fecha":"2026-07-15","dia":"Mié","salida":"Vichy","meta":"Nevers","km":161.3},
+  {"numero":12,"tipo":"llana","fecha":"2026-07-16","dia":"Jue","salida":"Circuit Nevers Magny-Cours","meta":"Chalon sur Saône","km":179.1},
+  {"numero":13,"tipo":"ondulada","fecha":"2026-07-17","dia":"Vie","salida":"Dole","meta":"Belfort","km":205.8},
+  {"numero":14,"tipo":"montana","fecha":"2026-07-18","dia":"Sáb","salida":"Mulhouse","meta":"Le Markstein Fellering","km":155.3},
+  {"numero":15,"tipo":"montana","fecha":"2026-07-19","dia":"Dom","salida":"Champagnole","meta":"Plateau de Solaison","km":183.9},
+  {"numero":16,"tipo":"contrarreloj_individual","fecha":"2026-07-21","dia":"Mar","salida":"Évian les Bains","meta":"Thonon les Bains","km":26.1},
+  {"numero":17,"tipo":"llana","fecha":"2026-07-22","dia":"Mié","salida":"Chambéry","meta":"Voiron","km":174.7},
+  {"numero":18,"tipo":"montana","fecha":"2026-07-23","dia":"Jue","salida":"Voiron","meta":"Orcières Merlette","km":185.2},
+  {"numero":19,"tipo":"montana","fecha":"2026-07-24","dia":"Vie","salida":"Gap","meta":"Alpe d'Huez","km":127.9},
+  {"numero":20,"tipo":"montana","fecha":"2026-07-25","dia":"Sáb","salida":"Le Bourg d'Oisans","meta":"Alpe d'Huez","km":170.9},
+  {"numero":21,"tipo":"llana","fecha":"2026-07-26","dia":"Dom","salida":"Thoiry","meta":"Paris Champs-Élysées","km":133}
+];
+
+let DATOS_ACTUAL = null;
+let SHA_ACTUAL = null;
+
+function comprobarAcceso(){
+  const val = document.getElementById('campo-password').value;
+  if(val === PASSWORD_ADMIN){
+    document.getElementById('pantalla-acceso').style.display='none';
+    document.getElementById('panel-principal').style.display='block';
+    iniciarPanel();
+  } else {
+    document.getElementById('aviso-acceso').innerHTML = '<div class="aviso error">Contraseña incorrecta</div>';
+  }
+}
+
+function iniciarPanel(){
+  cargarConfigLocal();
+  rellenarDatalists();
+  construirCamposEtapa();
+  construirCamposFinal();
+  construirEditorPuntuacion();
+  llenarSelectorCalendario();
+  cargarDesdeGitHub();
+}
+
+const ICONO_TIPO_ADMIN = {
+  contrarreloj_equipos: '⏱️ CRE',
+  contrarreloj_individual: '⏱️ CRI',
+  montana: '⛰️ Montaña',
+  llana: '🏁 Llana',
+  ondulada: '〰️ Ondulada',
+};
+
+function llenarSelectorCalendario(){
+  const sel = document.getElementById('selector-calendario');
+  if(!sel) return;
+  let html = '<option value="">— Elige una etapa del calendario (opcional, autocompleta) —</option>';
+  CALENDARIO_2026.forEach(e=>{
+    const [y,m,d] = e.fecha.split('-');
+    html += `<option value="${e.numero}">Etapa ${e.numero} · ${e.salida} → ${e.meta} · ${e.dia} ${d}/${m} · ${ICONO_TIPO_ADMIN[e.tipo]||''}</option>`;
+  });
+  sel.innerHTML = html;
+}
+
+function elegirEtapaCalendario(){
+  const sel = document.getElementById('selector-calendario');
+  const num = parseInt(sel.value);
+  if(!num) return;
+  const e = CALENDARIO_2026.find(x=>x.numero===num);
+  if(!e) return;
+  document.getElementById('etapa-numero').value = e.numero;
+  document.getElementById('etapa-nombre').value = `${e.salida} → ${e.meta}`;
+  cargarEtapaExistente(true);
+}
+
+function rellenarDatalists(){
+  document.getElementById('lista-corredores').innerHTML =
+    CORREDORES_MAESTRO.map(c=>`<option value="${c}">`).join('');
+  document.getElementById('lista-equipos').innerHTML =
+    EQUIPOS_MAESTRO.map(e=>`<option value="${e}">`).join('');
+}
+
+// ============ CONFIG GITHUB ============
+function cargarConfigLocal(){
+  document.getElementById('cfg-owner').value = localStorage.getItem('porra_owner') || '';
+  document.getElementById('cfg-repo').value = localStorage.getItem('porra_repo') || '';
+  document.getElementById('cfg-branch').value = localStorage.getItem('porra_branch') || 'main';
+  document.getElementById('cfg-path').value = localStorage.getItem('porra_path') || 'data.json';
+  document.getElementById('cfg-token').value = localStorage.getItem('porra_token') || '';
+}
+
+function guardarConfig(){
+  localStorage.setItem('porra_owner', document.getElementById('cfg-owner').value.trim());
+  localStorage.setItem('porra_repo', document.getElementById('cfg-repo').value.trim());
+  localStorage.setItem('porra_branch', document.getElementById('cfg-branch').value.trim() || 'main');
+  localStorage.setItem('porra_path', document.getElementById('cfg-path').value.trim() || 'data.json');
+  localStorage.setItem('porra_token', document.getElementById('cfg-token').value.trim());
+  document.getElementById('aviso-config').innerHTML = '<div class="aviso ok">Configuración guardada en este navegador.</div>';
+}
+
+function getConfig(){
+  return {
+    owner: localStorage.getItem('porra_owner'),
+    repo: localStorage.getItem('porra_repo'),
+    branch: localStorage.getItem('porra_branch') || 'main',
+    path: localStorage.getItem('porra_path') || 'data.json',
+    token: localStorage.getItem('porra_token'),
+  };
+}
+
+async function probarConexion(){
+  guardarConfig();
+  const cfg = getConfig();
+  const aviso = document.getElementById('aviso-config');
+  try{
+    const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`, {
+      headers: { Authorization: `token ${cfg.token}` }
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    aviso.innerHTML = '<div class="aviso ok">Conexión correcta con el repositorio ✅</div>';
+  }catch(e){
+    aviso.innerHTML = `<div class="aviso error">No se pudo conectar: ${e.message}. Revisa usuario/repo/token.</div>`;
+  }
+}
+
+async function leerArchivoGitHub(){
+  const cfg = getConfig();
+  const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}?ref=${cfg.branch}`, {
+    headers: { Authorization: `token ${cfg.token}` }
+  });
+  if(!res.ok) throw new Error('No se pudo leer data.json (HTTP ' + res.status + ')');
+  const json = await res.json();
+  const contenido = decodeURIComponent(escape(atob(json.content)));
+  return { datos: JSON.parse(contenido), sha: json.sha };
+}
+
+async function escribirArchivoGitHub(nuevosDatos, mensaje){
+  const cfg = getConfig();
+  const contenidoStr = JSON.stringify(nuevosDatos, null, 2);
+  const codificado = btoa(unescape(encodeURIComponent(contenidoStr)));
+  const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`, {
+    method: 'PUT',
+    headers: { Authorization: `token ${cfg.token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: mensaje, content: codificado, sha: SHA_ACTUAL, branch: cfg.branch })
+  });
+  if(!res.ok){
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.message || ('HTTP ' + res.status));
+  }
+  const data = await res.json();
+  SHA_ACTUAL = data.content.sha;
+  DATOS_ACTUAL = nuevosDatos;
+  return data;
+}
+
+async function cargarDesdeGitHub(){
+  const cfg = getConfig();
+  if(!cfg.owner || !cfg.repo || !cfg.token){
+    document.getElementById('aviso-participantes').innerHTML =
+      '<div class="aviso info">Rellena y guarda la configuración de GitHub arriba para empezar.</div>';
+    return;
+  }
+  try{
+    const { datos, sha } = await leerArchivoGitHub();
+    DATOS_ACTUAL = datos;
+    SHA_ACTUAL = sha;
+    pintarTablaParticipantesAdmin();
+    construirEditorPuntuacion();
+  }catch(e){
+    document.getElementById('aviso-participantes').innerHTML =
+      `<div class="aviso error">Error al cargar data.json: ${e.message}</div>`;
+  }
+}
+
+// ============ VALIDACIÓN CONTRA LISTA OFICIAL ============
+
+// Distancia de Levenshtein, para sugerir el nombre correcto ante una errata
+function distancia(a, b){
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m+1}, ()=>new Array(n+1).fill(0));
+  for(let i=0;i<=m;i++) dp[i][0]=i;
+  for(let j=0;j<=n;j++) dp[0][j]=j;
+  for(let i=1;i<=m;i++){
+    for(let j=1;j<=n;j++){
+      dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  return dp[m][n];
+}
+
+// Busca el nombre EXACTO tal cual está en la lista oficial (ignorando mayúsculas/tildes)
+function nombreOficial(nombre, lista){
+  const norm = normaliza(nombre);
+  return lista.find(x => normaliza(x) === norm) || null;
+}
+
+// Si no hay coincidencia exacta, sugiere el más parecido de la lista oficial
+function sugerencia(nombre, lista){
+  const norm = normaliza(nombre);
+  let mejor = null, mejorDist = Infinity;
+  lista.forEach(c=>{
+    const d = distancia(norm, normaliza(c));
+    if(d < mejorDist){ mejorDist = d; mejor = c; }
+  });
+  return mejorDist <= 3 ? mejor : null;
+}
+
+// ============ PARTICIPANTES ============
+function previsualizarImport(){
+  const texto = document.getElementById('texto-import').value.trim();
+  if(!texto){ return; }
+  const lineas = texto.split('\n').map(l=>l.trim()).filter(Boolean);
+  const nuevos = [];
+  const problemas = [];
+
+  lineas.forEach((linea, i)=>{
+    const partes = linea.split(';').map(p=>p.trim());
+    if(partes.length < 3){ problemas.push(`Línea ${i+1}: faltan campos (usa "Nombre; corredores; equipos")`); return; }
+    const [nombre, corredoresTxt, equiposTxt] = partes;
+    if(!nombre){ problemas.push(`Línea ${i+1}: falta el nombre del participante`); return; }
+
+    const corredoresRaw = corredoresTxt.split(',').map(c=>c.trim()).filter(Boolean);
+    const equiposRaw = equiposTxt.split(',').map(e=>e.trim()).filter(Boolean);
+
+    if(corredoresRaw.length !== 9) problemas.push(`❌ ${nombre}: tiene ${corredoresRaw.length} corredores (deben ser 9)`);
+    if(equiposRaw.length !== 3) problemas.push(`❌ ${nombre}: tiene ${equiposRaw.length} equipos (deben ser 3)`);
+
+    const corredoresOk = [];
+    corredoresRaw.forEach(c=>{
+      const oficial = nombreOficial(c, CORREDORES_MAESTRO);
+      if(oficial) corredoresOk.push(oficial);
+      else{
+        const sug = sugerencia(c, CORREDORES_MAESTRO);
+        problemas.push(`❌ ${nombre}: "${c}" no está en la lista de corredores${sug ? ` — ¿querías decir "${sug}"?` : ' (revísalo)'}`);
+      }
+    });
+    const dupCorredores = [...new Set(corredoresOk.filter((v,idx,arr)=>arr.indexOf(v)!==idx))];
+    if(dupCorredores.length) problemas.push(`❌ ${nombre}: corredor repetido (${dupCorredores.join(', ')})`);
+
+    const equiposOk = [];
+    equiposRaw.forEach(e=>{
+      const oficial = nombreOficial(e, EQUIPOS_MAESTRO);
+      if(oficial) equiposOk.push(oficial);
+      else{
+        const sug = sugerencia(e, EQUIPOS_MAESTRO);
+        problemas.push(`❌ ${nombre}: equipo "${e}" no existe${sug ? ` — ¿querías decir "${sug}"?` : ' (revísalo)'}`);
+      }
+    });
+    const dupEquipos = [...new Set(equiposOk.filter((v,idx,arr)=>arr.indexOf(v)!==idx))];
+    if(dupEquipos.length) problemas.push(`❌ ${nombre}: equipo repetido (${dupEquipos.join(', ')})`);
+
+    const valido = corredoresOk.length===9 && equiposOk.length===3 && dupCorredores.length===0 && dupEquipos.length===0;
+    nuevos.push({ id: 'p-' + nombre.toLowerCase().replace(/[^a-z0-9]+/g,'-') + '-' + Date.now() + i, nombre, corredores: corredoresOk, equipos: equiposOk, _valido: valido });
+  });
+
+  const validos = nuevos.filter(n=>n._valido).map(({_valido, ...resto})=>resto);
+  let html = '';
+  if(problemas.length){
+    html += `<div class="aviso error"><strong>${problemas.length} problema(s) encontrado(s) — corrígelos en el texto y vuelve a previsualizar:</strong><br>${problemas.join('<br>')}</div>`;
+  }
+  html += `<p class="mini">${validos.length} de ${nuevos.length} participante(s) correctos y listos para añadir.</p>`;
+  if(problemas.length === 0 && validos.length > 0){
+    html += '<div style="display:flex; gap:10px;"><button class="accion" onclick="confirmarImport()">Añadir a la lista</button></div>';
+  } else if(problemas.length > 0){
+    html += '<p class="mini">No se puede añadir nada hasta que no queden errores en rojo.</p>';
+  }
+  document.getElementById('preview-import').innerHTML = html;
+  window._importPendiente = validos;
+}
+
+let EDITANDO_ID = null;
+
+function confirmarImport(){
+  if(!DATOS_ACTUAL || SHA_ACTUAL === null){
+    document.getElementById('preview-import').innerHTML =
+      '<div class="aviso error">⚠️ No se han cargado todavía los datos actuales de GitHub (puede que el token no estuviera puesto al cargar la página). <strong>Recarga la página</strong> y vuelve a intentarlo, para no arriesgarte a machacar los datos que ya había.</div>';
+    return;
+  }
+  const pendientes = window._importPendiente || [];
+  if(EDITANDO_ID && pendientes.length === 1){
+    const idx = DATOS_ACTUAL.participantes.findIndex(x => x.id === EDITANDO_ID);
+    const actualizado = { ...pendientes[0], id: EDITANDO_ID };
+    if(idx >= 0) DATOS_ACTUAL.participantes[idx] = actualizado;
+    else DATOS_ACTUAL.participantes.push(actualizado);
+    document.getElementById('preview-import').innerHTML = '<div class="aviso ok">✏️ Participante actualizado. Pulsa "Guardar cambios en GitHub" para publicarlo.</div>';
+  } else {
+    DATOS_ACTUAL.participantes = (DATOS_ACTUAL.participantes || []).filter(p => p.id !== 'demo-1');
+    DATOS_ACTUAL.participantes = DATOS_ACTUAL.participantes.concat(pendientes);
+    document.getElementById('preview-import').innerHTML = '<div class="aviso ok">Añadidos. Pulsa "Guardar cambios en GitHub" para publicarlos.</div>';
+  }
+  EDITANDO_ID = null;
+  document.getElementById('texto-import').value = '';
+  document.getElementById('aviso-editando').innerHTML = '';
+  pintarTablaParticipantesAdmin();
+}
+
+function editarParticipante(id){
+  const p = DATOS_ACTUAL.participantes.find(x => x.id === id);
+  if(!p) return;
+  EDITANDO_ID = id;
+  document.getElementById('texto-import').value = `${p.nombre}; ${(p.corredores||[]).join(',')}; ${(p.equipos||[]).join(',')}`;
+  document.getElementById('preview-import').innerHTML = '';
+  document.getElementById('aviso-editando').innerHTML =
+    `<div class="aviso info">✏️ Editando a <strong>${p.nombre}</strong> — cambia lo que necesites en el texto de arriba (nombre, corredores o equipos) y pulsa "Previsualizar". Al confirmar, sustituirá a este participante en vez de duplicarlo.
+    <button class="secundaria" style="margin-left:10px" onclick="cancelarEdicion()">Cancelar edición</button></div>`;
+  document.getElementById('texto-import').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function cancelarEdicion(){
+  EDITANDO_ID = null;
+  document.getElementById('texto-import').value = '';
+  document.getElementById('aviso-editando').innerHTML = '';
+  document.getElementById('preview-import').innerHTML = '';
+}
+
+function pintarTablaParticipantesAdmin(){
+  const cont = document.getElementById('tabla-participantes-admin');
+  const lista = (DATOS_ACTUAL && DATOS_ACTUAL.participantes) || [];
+  document.getElementById('conteo-participantes').textContent = lista.length;
+  if(!lista.length){ cont.innerHTML = '<p class="mini">Sin participantes todavía.</p>'; return; }
+  let html = '<table><thead><tr><th>Nombre</th><th>Corredores</th><th>Equipos</th><th></th></tr></thead><tbody>';
+  lista.forEach((p)=>{
+    html += `<tr>
+      <td>${p.nombre}</td>
+      <td class="mini">${(p.corredores||[]).join(', ')}</td>
+      <td class="mini">${(p.equipos||[]).join(', ')}</td>
+      <td style="white-space:nowrap;">
+        <button class="secundaria" onclick="editarParticipante('${p.id}')">Editar</button>
+        <button class="secundaria" onclick="borrarParticipante('${p.id}')">Borrar</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  cont.innerHTML = html;
+}
+
+function borrarParticipante(id){
+  const p = DATOS_ACTUAL.participantes.find(x => x.id === id);
+  if(!p) return;
+  if(!confirm(`¿Borrar a "${p.nombre}" de la lista local? (aún tendrás que guardar en GitHub)`)) return;
+  DATOS_ACTUAL.participantes = DATOS_ACTUAL.participantes.filter(x => x.id !== id);
+  if(EDITANDO_ID === id) cancelarEdicion();
+  pintarTablaParticipantesAdmin();
+}
+
+async function guardarParticipantes(){
+  const aviso = document.getElementById('aviso-participantes');
+  if(!DATOS_ACTUAL || SHA_ACTUAL === null){
+    aviso.innerHTML = '<div class="aviso error">⚠️ No hay una conexión válida con GitHub cargada. Recarga la página, comprueba la configuración y vuelve a intentarlo.</div>';
+    return;
+  }
+  try{
+    aviso.innerHTML = '<div class="aviso info">Guardando en GitHub…</div>';
+    await escribirArchivoGitHub(DATOS_ACTUAL, `Actualiza participantes (${DATOS_ACTUAL.participantes.length})`);
+    aviso.innerHTML = '<div class="aviso ok">Guardado y publicado ✅ La web pública se actualizará en unos segundos.</div>';
+  }catch(e){
+    aviso.innerHTML = `<div class="aviso error">Error al guardar: ${e.message}</div>`;
+  }
+}
+
+// ============ ETAPA ============
+function construirCamposEtapa(){
+  document.getElementById('campos-etapa').innerHTML = camposPosiciones('e-etapa-', 10);
+  document.getElementById('campos-general').innerHTML = camposPosiciones('e-general-', 10);
+  document.getElementById('campos-puntos').innerHTML = camposPosiciones('e-puntos-', 5);
+  document.getElementById('campos-montana').innerHTML = camposPosiciones('e-montana-', 5);
+  document.getElementById('campos-equipos').innerHTML = camposPosiciones('e-equipos-', 5, true);
+}
+
+function camposPosiciones(prefijo, cantidad, esEquipo){
+  let html = '';
+  for(let i=1;i<=cantidad;i++){
+    html += `<input type="text" id="${prefijo}${i}" placeholder="${i}º" list="${esEquipo ? 'lista-equipos':'lista-corredores'}">`;
+  }
+  return html;
+}
+
+function leerCampos(prefijo, cantidad){
+  const arr = [];
+  for(let i=1;i<=cantidad;i++){
+    const v = document.getElementById(`${prefijo}${i}`).value.trim().toUpperCase();
+    if(v) arr.push(v);
+  }
+  return arr;
+}
+
+// Para resultados de etapa/final: los nombres pueden incluir corredores reales
+// que no están en tu porra (no pasa nada, simplemente nadie los tenía elegidos).
+// Esto AVISA de nombres no reconocidos pero NO bloquea el guardado, salvo duplicados reales.
+function leerCamposValidado(prefijo, cantidad, listaOficial, etiqueta){
+  const arr = [];
+  const avisos = [];
+  for(let i=1;i<=cantidad;i++){
+    const campo = document.getElementById(`${prefijo}${i}`);
+    const v = campo.value.trim();
+    if(!v){ campo.style.borderColor = ''; continue; }
+    const oficial = nombreOficial(v, listaOficial);
+    if(oficial){
+      arr.push(oficial);
+      campo.style.borderColor = '';
+    } else {
+      arr.push(v.toUpperCase());
+      const sug = sugerencia(v, listaOficial);
+      avisos.push(`Posición ${i} (${etiqueta}): "${v}" no está en tu lista de corredores de la porra${sug ? ` — si era un error, ¿querías decir "${sug}"?` : ' (normal si ese corredor no fue elegible este año)'}`);
+      campo.style.borderColor = '#6b5c17';
+    }
+  }
+  const dup = [...new Set(arr.filter((x,idx,a)=>a.indexOf(x)!==idx))];
+  const errores = dup.length ? [`${etiqueta}: hay repetidos (${dup.join(', ')})`] : [];
+  return { arr, avisos, errores };
+}
+
+function escribirCampos(prefijo, valores){
+  (valores||[]).forEach((v, idx)=>{
+    const campo = document.getElementById(`${prefijo}${idx+1}`);
+    if(campo) campo.value = v;
+  });
+}
+
+function cargarEtapaExistente(silencioso){
+  const num = parseInt(document.getElementById('etapa-numero').value);
+  if(!num){ if(!silencioso) alert('Escribe primero el número de etapa que quieres cargar/editar'); return; }
+  const etapa = DATOS_ACTUAL && (DATOS_ACTUAL.resultados || []).find(r=>r.numero===num);
+  if(!etapa){ if(!silencioso) alert('No existe todavía esa etapa. Se creará una nueva al guardar.'); return; }
+  document.getElementById('etapa-nombre').value = etapa.nombre || '';
+  escribirCampos('e-etapa-', etapa.etapa);
+  escribirCampos('e-general-', etapa.general);
+  escribirCampos('e-puntos-', etapa.puntos);
+  escribirCampos('e-montana-', etapa.montana);
+  escribirCampos('e-equipos-', etapa.equipos);
+}
+
+async function guardarEtapa(){
+  const aviso = document.getElementById('aviso-etapa');
+  const numero = parseInt(document.getElementById('etapa-numero').value);
+  if(!numero){ aviso.innerHTML = '<div class="aviso error">Falta el número de etapa</div>'; return; }
+
+  const rEtapa = leerCamposValidado('e-etapa-', 10, CORREDORES_MAESTRO, 'etapa');
+  const rGeneral = leerCamposValidado('e-general-', 10, CORREDORES_MAESTRO, 'general');
+  const rPuntos = leerCamposValidado('e-puntos-', 5, CORREDORES_MAESTRO, 'puntos');
+  const rMontana = leerCamposValidado('e-montana-', 5, CORREDORES_MAESTRO, 'montaña');
+  const rEquipos = leerCamposValidado('e-equipos-', 5, EQUIPOS_MAESTRO, 'equipos');
+  const todosErrores = [...rEtapa.errores, ...rGeneral.errores, ...rPuntos.errores, ...rMontana.errores, ...rEquipos.errores];
+  if(todosErrores.length){
+    aviso.innerHTML = `<div class="aviso error"><strong>Corrige esto antes de guardar:</strong><br>${todosErrores.join('<br>')}</div>`;
+    return;
+  }
+  const todosAvisos = [...rEtapa.avisos, ...rGeneral.avisos, ...rPuntos.avisos, ...rMontana.avisos, ...rEquipos.avisos];
+  if(todosAvisos.length){
+    const continuar = confirm(`Hay ${todosAvisos.length} nombre(s) que no reconozco de tu lista de la porra (puede ser normal si ese corredor no fue elegible). Revisa por si acaso:\n\n${todosAvisos.join('\n')}\n\n¿Guardar de todas formas?`);
+    if(!continuar) return;
+  }
+
+  const nuevaEtapa = {
+    numero,
+    nombre: document.getElementById('etapa-nombre').value.trim(),
+    etapa: rEtapa.arr,
+    general: rGeneral.arr,
+    puntos: rPuntos.arr,
+    montana: rMontana.arr,
+    equipos: rEquipos.arr,
+  };
+
+  if(!DATOS_ACTUAL || SHA_ACTUAL === null){ aviso.innerHTML = '<div class="aviso error">Primero conecta con GitHub arriba (recarga la página si acabas de poner el token)</div>'; return; }
+
+  DATOS_ACTUAL.resultados = DATOS_ACTUAL.resultados || [];
+  const idxExistente = DATOS_ACTUAL.resultados.findIndex(r=>r.numero===numero);
+  if(idxExistente >= 0) DATOS_ACTUAL.resultados[idxExistente] = nuevaEtapa;
+  else DATOS_ACTUAL.resultados.push(nuevaEtapa);
+
+  try{
+    aviso.innerHTML = '<div class="aviso info">Guardando en GitHub…</div>';
+    await escribirArchivoGitHub(DATOS_ACTUAL, `Resultados etapa ${numero}`);
+    aviso.innerHTML = '<div class="aviso ok">Etapa guardada y publicada ✅</div>';
+  }catch(e){
+    aviso.innerHTML = `<div class="aviso error">Error al guardar: ${e.message}</div>`;
+  }
+}
+
+// ============ BONUS FINAL ============
+function construirCamposFinal(){
+  document.getElementById('campos-final-general').innerHTML = camposPosiciones('f-general-', 10);
+  document.getElementById('campos-final-puntos').innerHTML = camposPosiciones('f-puntos-', 5);
+  document.getElementById('campos-final-montana').innerHTML = camposPosiciones('f-montana-', 5);
+  document.getElementById('campos-final-equipos').innerHTML = camposPosiciones('f-equipos-', 5, true);
+}
+
+async function guardarBonusFinal(){
+  const aviso = document.getElementById('aviso-final');
+  const rGeneral = leerCamposValidado('f-general-', 10, CORREDORES_MAESTRO, 'general final');
+  const rPuntos = leerCamposValidado('f-puntos-', 5, CORREDORES_MAESTRO, 'puntos final');
+  const rMontana = leerCamposValidado('f-montana-', 5, CORREDORES_MAESTRO, 'montaña final');
+  const rEquipos = leerCamposValidado('f-equipos-', 5, EQUIPOS_MAESTRO, 'equipos final');
+  const todosErrores = [...rGeneral.errores, ...rPuntos.errores, ...rMontana.errores, ...rEquipos.errores];
+  if(todosErrores.length){
+    aviso.innerHTML = `<div class="aviso error"><strong>Corrige esto antes de guardar:</strong><br>${todosErrores.join('<br>')}</div>`;
+    return;
+  }
+  const todosAvisos = [...rGeneral.avisos, ...rPuntos.avisos, ...rMontana.avisos, ...rEquipos.avisos];
+  if(todosAvisos.length){
+    const continuar = confirm(`Hay ${todosAvisos.length} nombre(s) que no reconozco de tu lista de la porra. Revisa por si acaso:\n\n${todosAvisos.join('\n')}\n\n¿Guardar de todas formas?`);
+    if(!continuar) return;
+  }
+  const bonus = {
+    general: rGeneral.arr,
+    puntos: rPuntos.arr,
+    montana: rMontana.arr,
+    equipos: rEquipos.arr,
+  };
+  if(!DATOS_ACTUAL || SHA_ACTUAL === null){ aviso.innerHTML = '<div class="aviso error">Primero conecta con GitHub arriba (recarga la página si acabas de poner el token)</div>'; return; }
+  DATOS_ACTUAL.bonusFinal = bonus;
+  try{
+    aviso.innerHTML = '<div class="aviso info">Guardando en GitHub…</div>';
+    await escribirArchivoGitHub(DATOS_ACTUAL, 'Clasificaciones finales del Tour');
+    aviso.innerHTML = '<div class="aviso ok">Bonus final guardado y publicado 🏁</div>';
+  }catch(e){
+    aviso.innerHTML = `<div class="aviso error">Error al guardar: ${e.message}</div>`;
+  }
+}
+
+// ============ PUNTUACIÓN ============
+const CATEGORIAS_PUNTUACION = [
+  { clave: 'etapa', etiqueta: '🚴 Etapa (diario, top 10)' },
+  { clave: 'generalDiaria', etiqueta: '👑 General diaria (top 10)' },
+  { clave: 'regularidadDiaria', etiqueta: '🟢 Regularidad diaria (top 5)' },
+  { clave: 'montanaDiaria', etiqueta: '🔴 KOM / Montaña diaria (top 5)' },
+  { clave: 'equiposDiaria', etiqueta: '🚩 Equipos diaria (top 5)' },
+  { clave: 'generalFinal', etiqueta: '👑 General FINAL (top 10)' },
+  { clave: 'regularidadFinal', etiqueta: '🟢 Regularidad FINAL (top 5)' },
+  { clave: 'montanaFinal', etiqueta: '🔴 Montaña FINAL (top 5)' },
+  { clave: 'equiposFinal', etiqueta: '🚩 Equipos FINAL (top 5)' },
+];
+
+function construirEditorPuntuacion(){
+  const cont = document.getElementById('editor-puntuacion');
+  if(!cont) return;
+  const tablaActual = obtenerTablaPuntos(DATOS_ACTUAL || {});
+  let html = '';
+  CATEGORIAS_PUNTUACION.forEach(cat=>{
+    html += `<div style="margin-bottom:16px;">
+      <h3 class="mini" style="color:var(--texto); margin-bottom:8px;">${cat.etiqueta}</h3>
+      <div class="grid-form">`;
+    tablaActual[cat.clave].forEach((v, idx)=>{
+      html += `<input type="number" id="pt-${cat.clave}-${idx+1}" value="${v}" placeholder="${idx+1}º">`;
+    });
+    html += `</div></div>`;
+  });
+  cont.innerHTML = html;
+}
+
+function leerTablaPuntosDelFormulario(){
+  const nuevaTabla = {};
+  let valido = true;
+  CATEGORIAS_PUNTUACION.forEach(cat=>{
+    const base = TABLA_PUNTOS_DEFECTO[cat.clave];
+    nuevaTabla[cat.clave] = base.map((_, idx)=>{
+      const el = document.getElementById(`pt-${cat.clave}-${idx+1}`);
+      const val = el ? parseInt(el.value) : NaN;
+      if(isNaN(val)) valido = false;
+      return isNaN(val) ? 0 : val;
+    });
+  });
+  return { nuevaTabla, valido };
+}
+
+async function guardarTablaPuntos(){
+  const aviso = document.getElementById('aviso-puntuacion');
+  if(!DATOS_ACTUAL || SHA_ACTUAL === null){
+    aviso.innerHTML = '<div class="aviso error">Primero conecta con GitHub arriba (recarga la página si acabas de poner el token)</div>';
+    return;
+  }
+  const { nuevaTabla, valido } = leerTablaPuntosDelFormulario();
+  if(!valido){ aviso.innerHTML = '<div class="aviso error">Algún valor no es un número válido.</div>'; return; }
+  DATOS_ACTUAL.tablaPuntos = nuevaTabla;
+  try{
+    aviso.innerHTML = '<div class="aviso info">Guardando en GitHub…</div>';
+    await escribirArchivoGitHub(DATOS_ACTUAL, 'Actualiza sistema de puntuación');
+    aviso.innerHTML = '<div class="aviso ok">Guardado y publicado ✅ Se recalculará todo (etapas ya metidas incluidas) con los nuevos valores.</div>';
+  }catch(e){
+    aviso.innerHTML = `<div class="aviso error">Error al guardar: ${e.message}</div>`;
+  }
+}
+
+async function restablecerTablaPuntos(){
+  if(!confirm('¿Seguro que quieres volver a los valores originales de puntuación? Se publicará en GitHub inmediatamente.')) return;
+  const aviso = document.getElementById('aviso-puntuacion');
+  if(!DATOS_ACTUAL || SHA_ACTUAL === null){
+    aviso.innerHTML = '<div class="aviso error">Primero conecta con GitHub arriba</div>';
+    return;
+  }
+  delete DATOS_ACTUAL.tablaPuntos;
+  construirEditorPuntuacion();
+  try{
+    aviso.innerHTML = '<div class="aviso info">Guardando en GitHub…</div>';
+    await escribirArchivoGitHub(DATOS_ACTUAL, 'Restablece sistema de puntuación original');
+    aviso.innerHTML = '<div class="aviso ok">Restablecido y publicado ✅</div>';
+  }catch(e){
+    aviso.innerHTML = `<div class="aviso error">Error al guardar: ${e.message}</div>`;
+  }
+}
+
+// ============ PESTAÑAS ============
+document.querySelectorAll('nav.pestañas button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.pestañas button').forEach(b=>b.classList.remove('activa'));
+    btn.classList.add('activa');
+    document.querySelectorAll('#panel-principal .vista').forEach(v=>v.style.display='none');
+    document.getElementById('vista-'+btn.dataset.tab).style.display='block';
+  });
+});
+</script>
+</body>
+</html>
