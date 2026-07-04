@@ -59,6 +59,26 @@
         "VISMA",
         "RED BULL"
       ]
+    },
+    {
+      "id": "p-castorama-17831448889040",
+      "nombre": "Castorama",
+      "corredores": [
+        "POGACAR",
+        "PHILIPSEN",
+        "DORIAN GODON",
+        "VINGEGAARD",
+        "TOM PIDCOCK",
+        "MAX KANTER",
+        "VELASCO",
+        "CORT NIELSEN",
+        "J F PARRA"
+      ],
+      "equipos": [
+        "RED BULL",
+        "UAE",
+        "LIDL-TREK"
+      ]
     }
   ],
   "resultados": [],
