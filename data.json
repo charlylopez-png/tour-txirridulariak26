@@ -299,6 +299,26 @@
         "VISMA",
         "RED BULL"
       ]
+    },
+    {
+      "id": "p-xabi-17831581639000",
+      "nombre": "Xabi",
+      "corredores": [
+        "POGACAR",
+        "SEIXAS",
+        "DEL TORO",
+        "PHILIPSEN",
+        "MAX KANTER",
+        "CATTANEO",
+        "VAN DIJKE",
+        "CEPEDA",
+        "JAVIER ROMO"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "VISMA"
+      ]
     }
   ],
   "resultados": [],
