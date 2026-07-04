@@ -139,6 +139,126 @@
         "RED BULL",
         "LIDL-TREK"
       ]
+    },
+    {
+      "id": "p-totxi-17831553853640",
+      "nombre": "Totxi",
+      "corredores": [
+        "POGACAR",
+        "DEL TORO",
+        "VINGEGAARD",
+        "PHILIPSEN",
+        "ABRAHAMSEN",
+        "MAX KANTER",
+        "LOUVEL",
+        "GATE",
+        "EENKHOORN"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-marijaia-17831553853641",
+      "nombre": "Marijaia",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "PHILIPSEN",
+        "JORDAN JEGAT",
+        "FRIGO",
+        "LENNY MTNZ",
+        "GANNA",
+        "SCHMID",
+        "BARGUIL"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "VISMA"
+      ]
+    },
+    {
+      "id": "p-mentxu-17831553853652",
+      "nombre": "Mentxu",
+      "corredores": [
+        "POGACAR",
+        "PHILIPSEN",
+        "TEJADA",
+        "DEL TORO",
+        "V PARET PEINTRE",
+        "AFFINI",
+        "CARAPAZ",
+        "POLITT",
+        "MATTHEWS"
+      ],
+      "equipos": [
+        "INEOS",
+        "UAE",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-onabas-17831553853653",
+      "nombre": "Onabas",
+      "corredores": [
+        "POGACAR",
+        "SEIXAS",
+        "DEL TORO",
+        "LIPOWITZ",
+        "FRETIN",
+        "MAX KANTER",
+        "ABRAHAMSEN",
+        "J F PARRA",
+        "CRAPS"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-aros-17831553853654",
+      "nombre": "Aros",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "MERLIER",
+        "TOM PIDCOCK",
+        "SIMMONS",
+        "CASTRILLO",
+        "BALDERSTONE",
+        "IZAGUIRRE",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK"
+      ]
+    },
+    {
+      "id": "p-abaztu-17831553853655",
+      "nombre": "Abaztu",
+      "corredores": [
+        "POGACAR",
+        "LIPOWITZ",
+        "DEL TORO",
+        "PEDERSEN",
+        "UIJTDEBROEKS",
+        "MAX KANTER",
+        "DEBRUYNE",
+        "ABRAHAMSEN",
+        "OTRUBA"
+      ],
+      "equipos": [
+        "VISMA",
+        "UAE",
+        "RED BULL"
+      ]
     }
   ],
   "resultados": [],
