@@ -799,6 +799,26 @@
         "INEOS",
         "RED BULL"
       ]
+    },
+    {
+      "id": "p-espimarti-17831846561070",
+      "nombre": "Espimarti",
+      "corredores": [
+        "POGACAR",
+        "TOBIAS JOHANNESSEN",
+        "VINGEGAARD",
+        "MERLIER",
+        "J F PARRA",
+        "R GREGOIRE",
+        "JORDAN JEGAT",
+        "ABRAHAMSEN",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "VISMA"
+      ]
     }
   ],
   "resultados": [],
