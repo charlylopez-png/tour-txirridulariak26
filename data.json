@@ -259,6 +259,46 @@
         "UAE",
         "RED BULL"
       ]
+    },
+    {
+      "id": "p-patxi-izaguirre-17831557926930",
+      "nombre": "Patxi Izaguirre",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "SEIXAS",
+        "DORIAN GODON",
+        "FRETIN",
+        "MOHORIC",
+        "STUYVEN",
+        "ANDERS JOHANNESSEN",
+        "MAX KANTER"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
+    },
+    {
+      "id": "p-casartelli-im-17831557926941",
+      "nombre": "Casartelli IM",
+      "corredores": [
+        "POGACAR",
+        "VINGEGAARD",
+        "TOM PIDCOCK",
+        "LENNY MTNZ",
+        "V PARET PEINTRE",
+        "BEN HEALY",
+        "ABRAHAMSEN",
+        "MAX KANTER",
+        "STEWART"
+      ],
+      "equipos": [
+        "UAE",
+        "VISMA",
+        "RED BULL"
+      ]
     }
   ],
   "resultados": [],
