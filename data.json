@@ -871,6 +871,56 @@
         "LIDL-TREK",
         "UAE"
       ]
+    },
+    {
+      "numero": 2,
+      "nombre": "Tarragona → Barcelona",
+      "etapa": [
+        "DEL TORO",
+        "POGACAR",
+        "EVENEPOEL",
+        "VINGEGAARD",
+        "SKJELMOSE",
+        "TOBIAS JOHANNESSEN",
+        "R GREGOIRE",
+        "LENNY MTNZ",
+        "SEIXAS",
+        "TOM PIDCOCK"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "VINGEGAARD",
+        "POGACAR",
+        "EVENEPOEL",
+        "DEL TORO",
+        "AYUSO",
+        "SEIXAS",
+        "R GREGOIRE",
+        "LIPOWITZ",
+        "LENNY MTNZ",
+        "TOM PIDCOCK"
+      ],
+      "puntos": [
+        "DEL TORO",
+        "ALEX MOLENAAR",
+        "POGACAR",
+        "EVENEPOEL",
+        "ENGELHARDT"
+      ],
+      "montana": [
+        "ALEX MOLENAAR",
+        "MC NULTY",
+        "ENGELHARDT",
+        "TOBIAS JOHANNESSEN",
+        "VAN DEN BROEK"
+      ],
+      "equipos": [
+        "UAE",
+        "INEOS",
+        "RED BULL",
+        "EF",
+        "LIDL-TREK"
+      ]
     }
   ],
   "bonusFinal": null,
