@@ -21,8 +21,7 @@
 
   <nav class="pestañas">
     <button class="activa" data-tab="general">🏆 General</button>
-    <button data-tab="calendario">📅 Calendario</button>
-    <button data-tab="etapas">🚴 Por etapa</button>
+    <button data-tab="calendario">🗺️ Etapas</button>
     <button data-tab="data">📊 Data</button>
   </nav>
 
@@ -41,28 +40,26 @@
 
   <div id="vista-calendario" class="vista" style="display:none">
     <div class="tarjeta">
-      <h2>📅 Recorrido — Tour de Francia 2026</h2>
+      <h2>🗺️ Etapas — Tour de Francia 2026</h2>
       <div id="lista-calendario" class="lista-calendario">Cargando…</div>
     </div>
-  </div>
-
-  <div id="vista-etapas" class="vista" style="display:none">
-    <div class="tarjeta">
-      <h2>🚴 Resultado por etapa</h2>
+    <div class="tarjeta" id="tarjeta-detalle-etapa">
+      <h2>🚴 Detalle de la etapa</h2>
       <div class="grid-form" style="margin-bottom:16px; max-width:340px;">
         <select id="selector-etapa"></select>
       </div>
-      <div id="detalle-etapa"></div>
+      <div id="detalle-etapa"><p class="mini">Elige una etapa arriba, o haz clic directamente en una del listado.</p></div>
     </div>
   </div>
 
   <div id="vista-data" class="vista" style="display:none">
     <div class="tarjeta">
       <div style="display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;">
-        <button class="secundaria" id="btn-data-kom" onclick="cambiarSubData('kom')">⛰️ KOM</button>
-        <button class="secundaria" id="btn-data-participantes" onclick="cambiarSubData('participantes')">👥 Participantes</button>
-        <button class="secundaria" id="btn-data-buscador" onclick="cambiarSubData('buscador')">🔍 ¿Quién tiene a...?</button>
-        <button class="secundaria" id="btn-data-sistema" onclick="cambiarSubData('sistema')">📖 Sistema de puntos</button>
+        <button class="sub-tab lunares" id="btn-data-kom" onclick="cambiarSubData('kom')">⛰️ KOM</button>
+        <button class="sub-tab amarillo" id="btn-data-idealteam" onclick="cambiarSubData('idealteam')">🧠 Equipo ideal</button>
+        <button class="sub-tab verde" id="btn-data-buscador" onclick="cambiarSubData('buscador')">🔍 ¿Quién tiene a...?</button>
+        <button class="sub-tab equipo" id="btn-data-participantes" onclick="cambiarSubData('participantes')">👥 Participantes</button>
+        <button class="sub-tab neutro" id="btn-data-sistema" onclick="cambiarSubData('sistema')">📖 Sistema de puntos</button>
       </div>
 
       <div id="sub-data-kom" class="sub-data">
@@ -73,6 +70,19 @@
           <button class="secundaria" id="btn-kom-equipos" onclick="cambiarKom('equipos')">Equipos</button>
         </div>
         <div id="tabla-kom">Cargando…</div>
+      </div>
+
+      <div id="sub-data-idealteam" class="sub-data" style="display:none">
+        <h2 style="margin-top:0">🧠 Equipo ideal</h2>
+        <p class="mini" style="margin-top:-8px; margin-bottom:14px;">Los 9 corredores (≤2000 pts) + 3 equipos que más puntos habrían dado.</p>
+        <div style="display:flex; gap:8px; margin-bottom:16px;">
+          <button class="secundaria" id="btn-ideal-etapa" onclick="cambiarModoIdeal('etapa')">De una etapa</button>
+          <button class="secundaria" id="btn-ideal-acumulado" onclick="cambiarModoIdeal('acumulado')">Acumulado (Tour)</button>
+        </div>
+        <div class="grid-form" id="selector-ideal-etapa-wrap" style="margin-bottom:16px; max-width:320px;">
+          <select id="selector-ideal-etapa" onchange="pintarEquipoIdeal()"></select>
+        </div>
+        <div id="contenido-equipo-ideal">Cargando…</div>
       </div>
 
       <div id="sub-data-participantes" class="sub-data" style="display:none">
@@ -140,6 +150,9 @@ async function cargarDatos(){
     pintarCalendario();
     llenarSelectorEtapas();
     llenarSelectorParticipantes();
+    llenarSelectorIdealEtapa();
+    document.getElementById('btn-ideal-etapa').classList.add('activa');
+    pintarEquipoIdeal();
   }catch(e){
     document.getElementById('subtitulo-estado').innerHTML =
       `<span style="color:#ff9d9f">Error cargando datos: ${e.message}</span>`;
@@ -233,14 +246,6 @@ function pintarClasificacionGeneral(cont){
     <div id="detalle-gen-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-gen-cont-${f.id}"></div></div>`;
   });
   html += '</div>';
-
-  if(DATOS.resultados && DATOS.resultados.length){
-    const resultadoAcumulado = calcularEquipoIdealAcumulado(DATOS, 2000, 9);
-    const equiposAcumulados = mejoresEquiposAcumulado(DATOS, 3);
-    html += `<h3 style="text-transform:uppercase; letter-spacing:.4px; color:var(--texto); font-family:Oswald,sans-serif; font-size:15px; margin:22px 0 10px;">🧠 Equipo ideal acumulado (máximo con ≤2000 pts + 3 mejores equipos, hasta hoy)</h3>`;
-    html += tarjetaEquipoIdeal(resultadoAcumulado, equiposAcumulados);
-  }
-
   cont.innerHTML = html;
 }
 
@@ -310,11 +315,9 @@ function toggleDetalleUltima(id){
 // ============ DATA: sub-navegación interna ============
 function cambiarSubData(sub){
   SUB_DATA = sub;
-  ['kom','participantes','buscador','sistema'].forEach(s=>{
+  ['kom','idealteam','participantes','buscador','sistema'].forEach(s=>{
     document.getElementById('sub-data-'+s).style.display = (s===sub) ? 'block' : 'none';
-    const btn = document.getElementById('btn-data-'+s);
-    btn.style.borderColor = (s===sub) ? 'var(--amarillo)' : '';
-    btn.style.color = (s===sub) ? 'var(--amarillo)' : '';
+    document.getElementById('btn-data-'+s).classList.toggle('activa', s===sub);
   });
 }
 
@@ -455,18 +458,18 @@ function pintarCalendario(){
   cont.innerHTML = html;
 }
 
-// Clic en una etapa del calendario → salta a "Por etapa" con esa jornada ya seleccionada
+// Clic en una etapa del calendario → muestra su desglose en la misma pestaña "Etapas"
 function irAEtapa(numero){
   const existe = DATOS.resultados.some(r => r.numero === numero);
-  cambiarPestaña('etapas');
+  const sel = document.getElementById('selector-etapa');
   if(existe){
-    const sel = document.getElementById('selector-etapa');
     sel.value = numero;
     pintarEtapa(numero);
   } else {
     document.getElementById('detalle-etapa').innerHTML =
       `<p class="mini">Todavía no se han metido resultados para la etapa ${numero}. En cuanto el admin los publique, aparecerán aquí.</p>`;
   }
+  document.getElementById('tarjeta-detalle-etapa').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function llenarSelectorEtapas(){
@@ -535,8 +538,6 @@ function pintarEtapa(numero){
     <div id="detalle-pe-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-pe-cont-${f.id}"></div></div>`;
   });
   html += '</div>';
-
-  html += equipoIdealHTML(etapa, tabla);
   cont.innerHTML = html;
 }
 
@@ -668,12 +669,43 @@ function tarjetaEquipoIdeal(resultadoCorredores, equiposElegidos){
   return html;
 }
 
-function equipoIdealHTML(etapa, tabla){
-  const resultado = calcularEquipoIdealEtapa(etapa, tabla, 2000, 9);
-  const equiposElegidos = mejoresEquiposEtapa(etapa, tabla, 3);
-  let html = `<h3 style="text-transform:uppercase; letter-spacing:.4px; color:var(--texto); font-family:Oswald,sans-serif; font-size:15px; margin:22px 0 10px;">🧠 Equipo ideal de la etapa (máximo con ≤2000 pts + 3 mejores equipos)</h3>`;
-  html += tarjetaEquipoIdeal(resultado, equiposElegidos);
-  return html;
+let MODO_IDEAL = 'etapa';
+
+function llenarSelectorIdealEtapa(){
+  const sel = document.getElementById('selector-ideal-etapa');
+  const etapas = (DATOS.resultados||[]).slice().sort((a,b)=>a.numero-b.numero);
+  if(!etapas.length){ sel.innerHTML = '<option>No hay etapas registradas todavía</option>'; return; }
+  sel.innerHTML = etapas.map(e=>`<option value="${e.numero}">Etapa ${e.numero}${e.nombre ? ' · '+e.nombre : ''}</option>`).join('');
+  sel.value = Math.max(...etapas.map(e=>e.numero));
+}
+
+function cambiarModoIdeal(modo){
+  MODO_IDEAL = modo;
+  document.getElementById('btn-ideal-etapa').classList.toggle('activa', modo==='etapa');
+  document.getElementById('btn-ideal-acumulado').classList.toggle('activa', modo==='acumulado');
+  document.getElementById('selector-ideal-etapa-wrap').style.display = modo==='etapa' ? 'grid' : 'none';
+  pintarEquipoIdeal();
+}
+
+function pintarEquipoIdeal(){
+  const cont = document.getElementById('contenido-equipo-ideal');
+  if(!DATOS.resultados || !DATOS.resultados.length){
+    cont.innerHTML = '<p class="mini">Todavía no hay ninguna etapa puntuada.</p>';
+    return;
+  }
+  const tabla = obtenerTablaPuntos(DATOS);
+  if(MODO_IDEAL === 'etapa'){
+    const numero = parseInt(document.getElementById('selector-ideal-etapa').value);
+    const etapa = DATOS.resultados.find(r=>r.numero===numero);
+    if(!etapa){ cont.innerHTML = '<p class="mini">Elige una etapa arriba.</p>'; return; }
+    const resultado = calcularEquipoIdealEtapa(etapa, tabla, 2000, 9);
+    const equiposElegidos = mejoresEquiposEtapa(etapa, tabla, 3);
+    cont.innerHTML = tarjetaEquipoIdeal(resultado, equiposElegidos);
+  } else {
+    const resultado = calcularEquipoIdealAcumulado(DATOS, 2000, 9);
+    const equiposElegidos = mejoresEquiposAcumulado(DATOS, 3);
+    cont.innerHTML = tarjetaEquipoIdeal(resultado, equiposElegidos);
+  }
 }
 
 function toggleDetallePorEtapa(id){

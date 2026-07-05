@@ -108,22 +108,22 @@
         </div>
 
         <h3 class="mini">🚴 Top 10 etapa (corredores — deja vacío si es CRE por equipos)</h3>
-        <div class="grid-form" id="campos-etapa"></div>
+        <div id="campos-etapa"></div>
 
         <h3 class="mini" style="margin-top:14px">🚩 Top 10 etapa — EQUIPOS (solo si es contrarreloj por equipos, CRE)</h3>
-        <div class="grid-form" id="campos-etapa-equipos"></div>
+        <div id="campos-etapa-equipos"></div>
 
         <h3 class="mini" style="margin-top:18px">👑 Top 10 clasificación general (tras esta etapa)</h3>
-        <div class="grid-form" id="campos-general"></div>
+        <div id="campos-general"></div>
 
         <h3 class="mini" style="margin-top:18px">🟢 Top 5 clasificación por puntos</h3>
-        <div class="grid-form" id="campos-puntos"></div>
+        <div id="campos-puntos"></div>
 
         <h3 class="mini" style="margin-top:18px">🔴 Top 5 clasificación de montaña</h3>
-        <div class="grid-form" id="campos-montana"></div>
+        <div id="campos-montana"></div>
 
         <h3 class="mini" style="margin-top:18px">🚩 Top 5 clasificación por equipos</h3>
-        <div class="grid-form" id="campos-equipos"></div>
+        <div id="campos-equipos"></div>
 
         <div style="margin-top:20px; display:flex; gap:10px;">
           <button class="accion" onclick="guardarEtapa()">Guardar y publicar etapa</button>
@@ -140,16 +140,16 @@
         <p class="mini">Esto añade el premio gordo de la clasificación final. Rellénalo solo cuando el Tour haya terminado.</p>
 
         <h3 class="mini">👑 Top 10 general final</h3>
-        <div class="grid-form" id="campos-final-general"></div>
+        <div id="campos-final-general"></div>
 
         <h3 class="mini" style="margin-top:18px">🟢 Top 5 puntos final</h3>
-        <div class="grid-form" id="campos-final-puntos"></div>
+        <div id="campos-final-puntos"></div>
 
         <h3 class="mini" style="margin-top:18px">🔴 Top 5 montaña final</h3>
-        <div class="grid-form" id="campos-final-montana"></div>
+        <div id="campos-final-montana"></div>
 
         <h3 class="mini" style="margin-top:18px">🚩 Top 5 equipos final</h3>
-        <div class="grid-form" id="campos-final-equipos"></div>
+        <div id="campos-final-equipos"></div>
 
         <div style="margin-top:20px;">
           <button class="accion" onclick="guardarBonusFinal()">Guardar bonus final y publicar</button>
@@ -589,10 +589,11 @@ function construirCamposEtapa(){
 }
 
 function camposPosiciones(prefijo, cantidad, esEquipo){
-  let html = '';
+  let html = '<div class="campos-verticales">';
   for(let i=1;i<=cantidad;i++){
-    html += `<input type="text" id="${prefijo}${i}" placeholder="${i}º" list="${esEquipo ? 'lista-equipos':'lista-corredores'}">`;
+    html += `<div class="campo-fila"><span class="campo-num">${i}º</span><input type="text" id="${prefijo}${i}" placeholder="Posición ${i}" list="${esEquipo ? 'lista-equipos':'lista-corredores'}"></div>`;
   }
+  html += '</div>';
   return html;
 }
 

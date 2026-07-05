@@ -491,3 +491,58 @@ footer.pie{
   border-bottom: 1px solid var(--linea);
 }
 .detalle-expandible:last-child{ border-bottom:none; }
+
+/* ---- Sub-pestañas de DATA, con color propio por sección ---- */
+.sub-tab{
+  font-family:'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing:.3px;
+  font-size: 14px;
+  font-weight:600;
+  background: var(--asfalto-3);
+  border: 2px solid var(--linea);
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor:pointer;
+  color: var(--texto);
+  transition: all .15s ease;
+}
+.sub-tab:hover{ filter: brightness(1.15); }
+.sub-tab.lunares{ border-color: var(--lunares); color: var(--lunares); }
+.sub-tab.amarillo{ border-color: var(--amarillo); color: var(--amarillo); }
+.sub-tab.verde{ border-color: var(--verde); color: var(--verde); }
+.sub-tab.equipo{ border-color: #9aa2a9; color: var(--texto); }
+.sub-tab.neutro{ border-color: #6b7278; color: var(--texto-tenue); }
+
+.sub-tab.activa.lunares{ background: var(--lunares); color:#fff; }
+.sub-tab.activa.amarillo{ background: var(--amarillo); color:#17140a; }
+.sub-tab.activa.verde{ background: var(--verde); color:#08210a; }
+.sub-tab.activa.equipo{ background: #9aa2a9; color:#17140a; }
+.sub-tab.activa.neutro{ background: #4a5158; color:#fff; }
+
+/* Texto algo mayor en las tarjetas de contenido (pedido para DATA, aplica en general) */
+.tarjeta h2{ font-size:16.5px; }
+.sub-data h2{ font-size:17px; }
+.sub-data p.mini{ font-size:13.5px; }
+
+/* ---- Campos de posición en vertical (panel admin) ---- */
+.campos-verticales{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-width: 420px;
+}
+.campo-fila{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.campo-fila .campo-num{
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  color: var(--texto-tenue);
+  width: 30px;
+  text-align:right;
+  flex-shrink:0;
+}
+.campo-fila input{ flex:1; }
