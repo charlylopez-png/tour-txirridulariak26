@@ -61,6 +61,7 @@
       <div style="display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;">
         <button class="secundaria" id="btn-data-kom" onclick="cambiarSubData('kom')">⛰️ KOM</button>
         <button class="secundaria" id="btn-data-participantes" onclick="cambiarSubData('participantes')">👥 Participantes</button>
+        <button class="secundaria" id="btn-data-buscador" onclick="cambiarSubData('buscador')">🔍 ¿Quién tiene a...?</button>
         <button class="secundaria" id="btn-data-sistema" onclick="cambiarSubData('sistema')">📖 Sistema de puntos</button>
       </div>
 
@@ -80,6 +81,16 @@
           <select id="selector-participante"></select>
         </div>
         <div id="detalle-participante"></div>
+      </div>
+
+      <div id="sub-data-buscador" class="sub-data" style="display:none">
+        <h2 style="margin-top:0">🔍 ¿Qué participantes tienen a...?</h2>
+        <p class="mini" style="margin-top:-8px; margin-bottom:14px;">Escribe un corredor real y descubre quién lo lleva en su equipo.</p>
+        <div class="grid-form" style="margin-bottom:16px; max-width:320px;">
+          <input type="text" id="buscador-corredor" list="lista-corredores-publica" placeholder="Ej: Pogačar" oninput="buscarCorredor()">
+          <datalist id="lista-corredores-publica"></datalist>
+        </div>
+        <div id="resultado-buscador"></div>
       </div>
 
       <div id="sub-data-sistema" class="sub-data" style="display:none">
@@ -222,6 +233,14 @@ function pintarClasificacionGeneral(cont){
     <div id="detalle-gen-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-gen-cont-${f.id}"></div></div>`;
   });
   html += '</div>';
+
+  if(DATOS.resultados && DATOS.resultados.length){
+    const resultadoAcumulado = calcularEquipoIdealAcumulado(DATOS, 2000, 9);
+    const equiposAcumulados = mejoresEquiposAcumulado(DATOS, 3);
+    html += `<h3 style="text-transform:uppercase; letter-spacing:.4px; color:var(--texto); font-family:Oswald,sans-serif; font-size:15px; margin:22px 0 10px;">🧠 Equipo ideal acumulado (máximo con ≤2000 pts + 3 mejores equipos, hasta hoy)</h3>`;
+    html += tarjetaEquipoIdeal(resultadoAcumulado, equiposAcumulados);
+  }
+
   cont.innerHTML = html;
 }
 
@@ -291,7 +310,7 @@ function toggleDetalleUltima(id){
 // ============ DATA: sub-navegación interna ============
 function cambiarSubData(sub){
   SUB_DATA = sub;
-  ['kom','participantes','sistema'].forEach(s=>{
+  ['kom','participantes','buscador','sistema'].forEach(s=>{
     document.getElementById('sub-data-'+s).style.display = (s===sub) ? 'block' : 'none';
     const btn = document.getElementById('btn-data-'+s);
     btn.style.borderColor = (s===sub) ? 'var(--amarillo)' : '';
@@ -516,7 +535,145 @@ function pintarEtapa(numero){
     <div id="detalle-pe-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-pe-cont-${f.id}"></div></div>`;
   });
   html += '</div>';
+
+  html += equipoIdealHTML(etapa, tabla);
   cont.innerHTML = html;
+}
+
+// ============ EQUIPO IDEAL (mochila: máximo de puntos con ≤2000 y 9 corredores) ============
+function puntosCorredorEnEtapa(nombre, etapaResultado, tabla){
+  return puntosDeLista(etapaResultado.etapa, nombre, tabla.etapa)
+       + puntosDeLista(etapaResultado.general, nombre, tabla.generalDiaria)
+       + puntosDeLista(etapaResultado.puntos, nombre, tabla.regularidadDiaria)
+       + puntosDeLista(etapaResultado.montana, nombre, tabla.montanaDiaria);
+}
+
+// Mochila 0/1 con dos restricciones (presupuesto y nº de corredores exacto):
+// dado un listado de candidatos {nombre, precio, puntos}, devuelve la combinación
+// de tamaño `tam` con coste <= presupuesto que maximiza la suma de puntos.
+function resolverMochila(candidatosBase, presupuesto, tam){
+  const candidatos = candidatosBase.filter(c => c.precio > 0 && c.precio <= presupuesto);
+  const n = candidatos.length;
+  const NEG = -Infinity;
+  const capB = presupuesto + 1, capK = tam + 1;
+
+  function crearCapa(){
+    const capa = new Array(capK);
+    for(let k=0;k<capK;k++) capa[k] = new Float64Array(capB).fill(NEG);
+    return capa;
+  }
+
+  const capas = new Array(n+1);
+  capas[0] = crearCapa();
+  capas[0][0][0] = 0;
+
+  for(let i=1;i<=n;i++){
+    const item = candidatos[i-1];
+    const prev = capas[i-1];
+    const capa = crearCapa();
+    for(let k=0;k<capK;k++){
+      for(let b=0;b<capB;b++){
+        let mejor = prev[k][b];
+        if(k>=1 && b>=item.precio){
+          const conItem = prev[k-1][b-item.precio];
+          if(conItem !== NEG && conItem + item.puntos > mejor) mejor = conItem + item.puntos;
+        }
+        capa[k][b] = mejor;
+      }
+    }
+    capas[i] = capa;
+  }
+
+  let mejorB = -1, mejorPuntos = NEG;
+  for(let b=0; b<=presupuesto; b++){
+    if(capas[n][tam][b] > mejorPuntos){ mejorPuntos = capas[n][tam][b]; mejorB = b; }
+  }
+  if(mejorB === -1 || mejorPuntos === NEG) return null;
+
+  const equipo = [];
+  let k = tam, b = mejorB;
+  for(let i=n; i>=1; i--){
+    if(k===0) break;
+    const item = candidatos[i-1];
+    if(b >= item.precio){
+      const conItem = capas[i-1][k-1][b-item.precio];
+      if(conItem !== NEG && conItem + item.puntos === capas[i][k][b]){
+        equipo.push(item);
+        b -= item.precio;
+        k -= 1;
+      }
+    }
+  }
+  equipo.sort((a,b2)=>b2.puntos-a.puntos);
+  return { equipo, totalPuntos: mejorPuntos, totalPrecio: equipo.reduce((s,c)=>s+c.precio,0) };
+}
+
+function calcularEquipoIdealEtapa(etapaResultado, tabla, presupuesto, tam){
+  presupuesto = presupuesto || 2000; tam = tam || 9;
+  const candidatos = CORREDORES_MAESTRO.map(nombre => ({
+    nombre, precio: PRECIOS_CORREDORES[nombre] || 0, puntos: puntosCorredorEnEtapa(nombre, etapaResultado, tabla)
+  }));
+  return resolverMochila(candidatos, presupuesto, tam);
+}
+
+function calcularEquipoIdealAcumulado(datos, presupuesto, tam){
+  presupuesto = presupuesto || 2000; tam = tam || 9;
+  const ranking = rankingCorredores(datos);
+  const mapaPuntos = {};
+  ranking.forEach(r => { mapaPuntos[normaliza(r.nombre)] = r.total; });
+  const candidatos = CORREDORES_MAESTRO.map(nombre => ({
+    nombre, precio: PRECIOS_CORREDORES[nombre] || 0, puntos: mapaPuntos[normaliza(nombre)] || 0
+  }));
+  return resolverMochila(candidatos, presupuesto, tam);
+}
+
+// Los 3 equipos ciclistas no tienen coste (elección libre), así que aquí basta
+// con coger los 3 mejores por puntos — no hace falta optimizar presupuesto.
+function mejoresEquiposEtapa(etapaResultado, tabla, n){
+  n = n || 3;
+  return EQUIPOS_MAESTRO
+    .map(nombre => ({
+      nombre,
+      puntos: puntosDeLista(etapaResultado.equipos, nombre, tabla.equiposDiaria) + puntosDeLista(etapaResultado.etapaEquipos, nombre, tabla.etapa)
+    }))
+    .sort((a,b)=>b.puntos-a.puntos)
+    .slice(0, n);
+}
+
+function mejoresEquiposAcumulado(datos, n){
+  n = n || 3;
+  return rankingEquipos(datos).slice(0, n).map(r => ({ nombre: r.nombre, puntos: r.total }));
+}
+
+function tarjetaEquipoIdeal(resultadoCorredores, equiposElegidos){
+  if(!resultadoCorredores) return '<p class="mini">No hay datos suficientes todavía.</p>';
+  const puntosEquipos = (equiposElegidos||[]).reduce((s,e)=>s+e.puntos,0);
+  const totalCombinado = resultadoCorredores.totalPuntos + puntosEquipos;
+  let html = `<div class="tarjeta" style="padding:16px 18px; margin-bottom:0;">`;
+  html += `<div style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+    <span class="pastilla amarillo">${totalCombinado} puntos totales</span>
+    <span class="pastilla equipo">${resultadoCorredores.totalPrecio} / 2000 pts de presupuesto (corredores)</span>
+  </div>`;
+  html += '<div class="desglose-equipo">';
+  resultadoCorredores.equipo.forEach(c=>{
+    html += `<div class="fila-desglose"><span>🚴 ${c.nombre} <span class="mini">(${c.precio} pts)</span></span><span class="total-puntos">${c.puntos}</span></div>`;
+  });
+  if(equiposElegidos && equiposElegidos.length){
+    html += '<div style="border-top:1px solid var(--linea); margin:6px 0 2px;"></div>';
+    equiposElegidos.forEach(e=>{
+      html += `<div class="fila-desglose"><span>🚩 ${e.nombre} <span class="mini">(equipo, sin coste)</span></span><span class="total-puntos">${e.puntos}</span></div>`;
+    });
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function equipoIdealHTML(etapa, tabla){
+  const resultado = calcularEquipoIdealEtapa(etapa, tabla, 2000, 9);
+  const equiposElegidos = mejoresEquiposEtapa(etapa, tabla, 3);
+  let html = `<h3 style="text-transform:uppercase; letter-spacing:.4px; color:var(--texto); font-family:Oswald,sans-serif; font-size:15px; margin:22px 0 10px;">🧠 Equipo ideal de la etapa (máximo con ≤2000 pts + 3 mejores equipos)</h3>`;
+  html += tarjetaEquipoIdeal(resultado, equiposElegidos);
+  return html;
 }
 
 function toggleDetallePorEtapa(id){
@@ -583,9 +740,43 @@ function cambiarPestaña(tab){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
+// ============ BUSCADOR: ¿quién tiene a...? ============
+function buscarCorredor(){
+  const valor = document.getElementById('buscador-corredor').value.trim();
+  const cont = document.getElementById('resultado-buscador');
+  if(!valor){ cont.innerHTML = ''; return; }
+  const key = normaliza(valor);
+  const coincidencias = DATOS.participantes.filter(p => (p.corredores||[]).some(c => normaliza(c).includes(key)));
+  if(!coincidencias.length){ cont.innerHTML = `<p class="mini">Nadie tiene seleccionado a "${valor}".</p>`; return; }
+
+  const oficial = CORREDORES_MAESTRO.find(c => normaliza(c) === key) ||
+                  CORREDORES_MAESTRO.find(c => normaliza(c).includes(key));
+
+  const filas = coincidencias.map(p=>{
+    const fila = CLASIFICACION.find(f=>f.id===p.id);
+    const contribucion = oficial ? detalleContribucionGeneral(p, DATOS).find(d => normaliza(d.nombre) === normaliza(oficial)) : null;
+    return { nombre: p.nombre, total: fila ? fila.total : 0, posicion: fila ? fila.posicion : '-', aportado: contribucion ? contribucion.puntos : 0 };
+  }).sort((a,b)=>b.total-a.total);
+
+  let html = `<p class="mini" style="margin-bottom:12px;">${filas.length} participante(s) tienen a <strong>${oficial || valor}</strong>:</p>`;
+  html += '<div class="lista-clasificacion">';
+  filas.forEach(f=>{
+    html += `<div class="export-fila">
+      <div class="export-rank">${f.posicion}</div>
+      <div class="export-nombre">${f.nombre}</div>
+      <div class="export-puntos">${f.total}</div>
+    </div>`;
+  });
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
 document.querySelectorAll('nav.pestañas button').forEach(btn=>{
   btn.addEventListener('click', ()=> cambiarPestaña(btn.dataset.tab));
 });
+
+document.getElementById('lista-corredores-publica').innerHTML =
+  CORREDORES_MAESTRO.map(c=>`<option value="${c}">`).join('');
 
 cambiarSubData('kom');
 cargarDatos();
