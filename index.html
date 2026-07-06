@@ -59,6 +59,7 @@
         <button class="sub-tab amarillo" id="btn-data-idealteam" onclick="cambiarSubData('idealteam')">🧠 Equipo ideal</button>
         <button class="sub-tab verde" id="btn-data-buscador" onclick="cambiarSubData('buscador')">🔍 ¿Quién tiene a...?</button>
         <button class="sub-tab equipo" id="btn-data-participantes" onclick="cambiarSubData('participantes')">👥 Participantes</button>
+        <button class="sub-tab naranja" id="btn-data-sorpresa" onclick="cambiarSubData('sorpresa')">🎁 Sorpresa</button>
         <button class="sub-tab neutro" id="btn-data-sistema" onclick="cambiarSubData('sistema')">📖 Sistema de puntos</button>
       </div>
 
@@ -101,6 +102,12 @@
           <datalist id="lista-corredores-publica"></datalist>
         </div>
         <div id="resultado-buscador"></div>
+      </div>
+
+      <div id="sub-data-sorpresa" class="sub-data" style="display:none">
+        <h2 style="margin-top:0">🎁 Top 10 corredores SORPRESA</h2>
+        <p class="mini" style="margin-top:-8px; margin-bottom:14px;">Corredores que han sumado puntos con los criterios de la porra, pero que <strong>nadie</strong> ha seleccionado en su equipo — puntos que se han quedado sin dueño.</p>
+        <div id="tabla-sorpresa">Cargando…</div>
       </div>
 
       <div id="sub-data-sistema" class="sub-data" style="display:none">
@@ -160,6 +167,7 @@ async function cargarDatos(){
       `${DATOS.participantes.length} participantes · ${DATOS.resultados.length} etapa(s) puntuada(s)${DATOS.bonusFinal ? ' · Tour finalizado' : ''}`;
     pintarGeneral();
     pintarKom();
+    pintarSorpresa();
     pintarSistema();
     pintarCalendario();
     llenarSelectorEtapas();
@@ -351,7 +359,7 @@ function toggleDetalleUltima(id){
 // ============ DATA: sub-navegación interna ============
 function cambiarSubData(sub){
   SUB_DATA = sub;
-  ['kom','idealteam','participantes','buscador','sistema'].forEach(s=>{
+  ['kom','idealteam','participantes','buscador','sorpresa','sistema'].forEach(s=>{
     document.getElementById('sub-data-'+s).style.display = (s===sub) ? 'block' : 'none';
     document.getElementById('btn-data-'+s).classList.toggle('activa', s===sub);
   });
@@ -414,7 +422,45 @@ function pintarKom(){
   }
 }
 
-// ============ SISTEMA DE PUNTOS (explicación pública) ============
+// ============ SORPRESA: corredores que puntúan pero nadie tiene ============
+function pintarSorpresa(){
+  const cont = document.getElementById('tabla-sorpresa');
+  if(!DATOS.resultados || !DATOS.resultados.length){
+    cont.innerHTML = '<p class="mini">Todavía no hay etapas puntuadas.</p>';
+    return;
+  }
+  const seleccionados = new Set();
+  DATOS.participantes.forEach(p => (p.corredores||[]).forEach(c => seleccionados.add(normaliza(c))));
+
+  const ranking = rankingCorredores(DATOS)
+    .filter(r => !seleccionados.has(normaliza(r.nombre)))
+    .slice(0, 10);
+
+  if(!ranking.length){
+    cont.innerHTML = '<p class="mini">De momento, todos los corredores que han puntuado están en algún equipo. ¡Ni una sorpresa!</p>';
+    return;
+  }
+
+  let html = '<table><thead><tr><th></th><th>Corredor</th><th class="mini" style="font-weight:400">Desglose</th><th style="text-align:right">Puntos</th></tr></thead><tbody>';
+  ranking.forEach((f, i)=>{
+    const pos = i+1;
+    const claseTop = pos<=3 ? 'top'+pos : '';
+    const desglose = [];
+    if(f.etapa) desglose.push(`🚴 ${f.etapa}`);
+    if(f.general) desglose.push(`👑 ${f.general}`);
+    if(f.puntos) desglose.push(`🟢 ${f.puntos}`);
+    if(f.montana) desglose.push(`🔴 ${f.montana}`);
+    if(f.bonus) desglose.push(`🏁 ${f.bonus}`);
+    html += `<tr class="${pos===1?'fila-lider':''}">
+      <td class="pos ${claseTop}">${medalla(pos)}</td>
+      <td><strong>${f.nombre}</strong></td>
+      <td class="mini">${desglose.join(' · ')}</td>
+      <td style="text-align:right" class="total-puntos">${f.total}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  cont.innerHTML = html;
+}
 function filaPuntos(etiqueta, valores){
   return `<div class="fila-etapa" style="grid-template-columns: 1fr; gap:6px; cursor:default;">
     <div><strong>${etiqueta}</strong></div>

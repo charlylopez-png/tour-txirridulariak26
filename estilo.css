@@ -514,12 +514,14 @@ footer.pie{
 .sub-tab.verde{ border-color: var(--verde); color: var(--verde); }
 .sub-tab.equipo{ border-color: #9aa2a9; color: var(--texto); }
 .sub-tab.neutro{ border-color: #6b7278; color: var(--texto-tenue); }
+.sub-tab.naranja{ border-color: #ff8c42; color: #ff8c42; }
 
 .sub-tab.activa.lunares{ background: var(--lunares); color:#fff; }
 .sub-tab.activa.amarillo{ background: var(--amarillo); color:#17140a; }
 .sub-tab.activa.verde{ background: var(--verde); color:#08210a; }
 .sub-tab.activa.equipo{ background: #9aa2a9; color:#17140a; }
 .sub-tab.activa.neutro{ background: #4a5158; color:#fff; }
+.sub-tab.activa.naranja{ background: #ff8c42; color:#1a0f05; }
 
 /* Texto algo mayor en las tarjetas de contenido (pedido para DATA, aplica en general) */
 .tarjeta h2{ font-size:16.5px; }
