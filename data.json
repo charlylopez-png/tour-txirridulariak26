@@ -921,6 +921,56 @@
         "EF",
         "LIDL-TREK"
       ]
+    },
+    {
+      "numero": 3,
+      "nombre": "Granollers → Les Angles",
+      "etapa": [
+        "POGACAR",
+        "VINGEGAARD",
+        "CARAPAZ",
+        "SEIXAS",
+        "TOBIAS JOHANNESSEN",
+        "VAN EETVELT",
+        "LIPOWITZ",
+        "EVENEPOEL",
+        "DEL TORO",
+        "AYUSO"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "DEL TORO",
+        "AYUSO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "LENNY MTNZ",
+        "TOBIAS JOHANNESSEN",
+        "VAN WILDER"
+      ],
+      "puntos": [
+        "POGACAR",
+        "VINGEGAARD",
+        "DEL TORO",
+        "PEDERSEN",
+        "EVENEPOEL"
+      ],
+      "montana": [
+        "BAUDIN",
+        "PRODHOMME",
+        "RAÚL G PIERNA",
+        "ALEX MOLENAAR",
+        "MC NULTY"
+      ],
+      "equipos": [
+        "UAE",
+        "RED BULL",
+        "LIDL-TREK",
+        "VISMA",
+        "EF"
+      ]
     }
   ],
   "bonusFinal": null,
