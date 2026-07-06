@@ -246,8 +246,29 @@ function pintarGeneral(){
   else pintarClasificacionUltimaEtapa(cont);
 }
 
+function calcularPuntosIdealAcumulado(){
+  const resultado = calcularEquipoIdealAcumulado(DATOS, 2000, 9);
+  if(!resultado) return 0;
+  const equipos = mejoresEquiposAcumulado(DATOS, 3);
+  return resultado.totalPuntos + equipos.reduce((s,e)=>s+e.puntos, 0);
+}
+
+function calcularPuntosIdealEtapa(etapa, tabla){
+  const resultado = calcularEquipoIdealEtapa(etapa, tabla, 2000, 9);
+  if(!resultado) return 0;
+  const equipos = mejoresEquiposEtapa(etapa, tabla, 3);
+  return resultado.totalPuntos + equipos.reduce((s,e)=>s+e.puntos, 0);
+}
+
+function pctIdealHTML(puntos, puntosIdeal){
+  if(!puntosIdeal) return '';
+  const pct = Math.round((puntos / puntosIdeal) * 100);
+  return `<div class="export-pct">${pct}% del ideal</div>`;
+}
+
 function pintarClasificacionGeneral(cont){
   const posMap = calcularPosicionesPrevias();
+  const puntosIdeal = DATOS.resultados && DATOS.resultados.length ? calcularPuntosIdealAcumulado() : 0;
   let html = '<div class="lista-clasificacion">';
   CLASIFICACION.forEach(f=>{
     const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
@@ -255,7 +276,7 @@ function pintarClasificacionGeneral(cont){
     html += `<div class="export-fila fila-clicable ${claseTop}" onclick="toggleDetalleGeneral('${f.id}')">
       <div class="export-rank">${f.posicion}</div>
       <div class="export-nombre">${f.nombre}${flecha}</div>
-      <div class="export-puntos">${f.total}</div>
+      <div class="export-puntos-wrap"><div class="export-puntos">${f.total}</div>${pctIdealHTML(f.total, puntosIdeal)}</div>
     </div>
     <div id="detalle-gen-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-gen-cont-${f.id}"></div></div>`;
   });
@@ -293,6 +314,7 @@ function pintarClasificacionUltimaEtapa(cont){
   filasDia.forEach((f,i)=>f.posicion=i+1);
   window._ultimaEtapaFilas = filasDia;
   window._ultimaEtapaObjeto = ultima;
+  const puntosIdealDia = calcularPuntosIdealEtapa(ultima, tabla);
 
   let html = '<div class="lista-clasificacion">';
   filasDia.forEach(f=>{
@@ -300,7 +322,7 @@ function pintarClasificacionUltimaEtapa(cont){
     html += `<div class="export-fila fila-clicable ${claseTop}" onclick="toggleDetalleUltima('${f.id}')">
       <div class="export-rank">${f.posicion}</div>
       <div class="export-nombre">${f.nombre}</div>
-      <div class="export-puntos">${f.total}</div>
+      <div class="export-puntos-wrap"><div class="export-puntos">${f.total}</div>${pctIdealHTML(f.total, puntosIdealDia)}</div>
     </div>
     <div id="detalle-ult-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-ult-cont-${f.id}"></div></div>`;
   });

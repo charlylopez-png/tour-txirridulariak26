@@ -597,3 +597,14 @@ footer.pie{
   background: #fff;
   display:block;
 }
+
+/* ---- Puntos + porcentaje respecto al equipo ideal ---- */
+.export-puntos-wrap{ display:flex; flex-direction:column; align-items:flex-end; gap:1px; }
+.export-pct{
+  font-size:10px;
+  font-family:'Oswald', sans-serif;
+  text-transform: uppercase;
+  color: var(--texto-tenue);
+  letter-spacing:.2px;
+}
+.lista-clasificacion .export-pct{ font-size:9.5px; }
