@@ -188,6 +188,12 @@ function medalla(pos){
   return pos;
 }
 
+// Insignia de broma: "maillot arcoíris" UCI para un participante concreto del grupo
+function nombreConInsignia(nombre){
+  const insignia = normaliza(nombre) === 'IKAS' ? '<span class="insignia-arcoiris" title="Campeón del mundo UCI (oficioso)"></span>' : '';
+  return insignia + nombre;
+}
+
 function precioDe(nombre){
   const key = normaliza(nombre);
   const encontrado = Object.keys(PRECIOS_CORREDORES).find(k => normaliza(k) === key);
@@ -283,7 +289,7 @@ function pintarClasificacionGeneral(cont){
     const flecha = posMap ? flechaVariacion(f.posicion, posMap[f.id]) : '';
     html += `<div class="export-fila fila-clicable ${claseTop}" onclick="toggleDetalleGeneral('${f.id}')">
       <div class="export-rank">${f.posicion}</div>
-      <div class="export-nombre">${f.nombre}${flecha}</div>
+      <div class="export-nombre">${nombreConInsignia(f.nombre)}${flecha}</div>
       <div class="export-puntos-wrap"><div class="export-puntos">${f.total}</div>${pctIdealHTML(f.total, puntosIdeal)}</div>
     </div>
     <div id="detalle-gen-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-gen-cont-${f.id}"></div></div>`;
@@ -329,7 +335,7 @@ function pintarClasificacionUltimaEtapa(cont){
     const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
     html += `<div class="export-fila fila-clicable ${claseTop}" onclick="toggleDetalleUltima('${f.id}')">
       <div class="export-rank">${f.posicion}</div>
-      <div class="export-nombre">${f.nombre}</div>
+      <div class="export-nombre">${nombreConInsignia(f.nombre)}</div>
       <div class="export-puntos-wrap"><div class="export-puntos">${f.total}</div>${pctIdealHTML(f.total, puntosIdealDia)}</div>
     </div>
     <div id="detalle-ult-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-ult-cont-${f.id}"></div></div>`;
@@ -614,7 +620,7 @@ function pintarEtapa(numero){
     const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
     html += `<div class="export-fila fila-clicable ${claseTop}" onclick="toggleDetallePorEtapa('${f.id}')">
       <div class="export-rank">${f.posicion}</div>
-      <div class="export-nombre">${f.nombre}</div>
+      <div class="export-nombre">${nombreConInsignia(f.nombre)}</div>
       <div class="export-puntos">${f.total}</div>
     </div>
     <div id="detalle-pe-${f.id}" class="detalle-expandible" style="display:none"><div id="detalle-pe-cont-${f.id}"></div></div>`;
@@ -877,7 +883,7 @@ function buscarCorredor(){
   filas.forEach(f=>{
     html += `<div class="export-fila">
       <div class="export-rank">${f.posicion}</div>
-      <div class="export-nombre">${f.nombre}</div>
+      <div class="export-nombre">${nombreConInsignia(f.nombre)}</div>
       <div class="export-puntos">${f.total}</div>
     </div>`;
   });

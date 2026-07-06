@@ -610,3 +610,21 @@ footer.pie{
   letter-spacing:.2px;
 }
 .lista-clasificacion .export-pct{ font-size:9.5px; }
+
+/* ---- Insignia especial "campeón del mundo UCI" (broma del grupo, uso puntual) ---- */
+.insignia-arcoiris{
+  display:inline-block;
+  width:16px; height:16px;
+  border-radius:4px;
+  margin-right:7px;
+  vertical-align:middle;
+  border:1px solid rgba(255,255,255,.35);
+  box-shadow: 0 1px 3px rgba(0,0,0,.4);
+  background: linear-gradient(180deg,
+    #0067b1 0% 20%,
+    #ce1126 20% 40%,
+    #111111 40% 60%,
+    #ffd400 60% 80%,
+    #009739 80% 100%
+  );
+}

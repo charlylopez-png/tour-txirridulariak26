@@ -839,6 +839,12 @@ function medallaExport(pos){
   return pos;
 }
 
+// Insignia de broma: "maillot arcoíris" UCI para un participante concreto del grupo
+function nombreConInsignia(nombre){
+  const insignia = normaliza(nombre) === 'IKAS' ? '<span class="insignia-arcoiris" title="Campeón del mundo UCI (oficioso)"></span>' : '';
+  return insignia + nombre;
+}
+
 function calcularPosicionesPreviasExport(clasificacion){
   if(!clasificacion.length) return null;
   const n = clasificacion[0].porEtapa.length;
@@ -884,7 +890,7 @@ function pintarExport(){
       }
       html += `<div class="export-fila ${claseTop}">
         <div class="export-rank">${f.posicion}</div>
-        <div class="export-nombre">${f.nombre}${flecha}</div>
+        <div class="export-nombre">${nombreConInsignia(f.nombre)}${flecha}</div>
         <div class="export-puntos">${f.total}</div>
       </div>`;
     });
@@ -909,7 +915,7 @@ function pintarExport(){
       const claseTop = pos<=3 ? 'top'+pos : '';
       html += `<div class="export-fila ${claseTop}">
         <div class="export-rank">${pos}</div>
-        <div class="export-nombre">${f.nombre}</div>
+        <div class="export-nombre">${nombreConInsignia(f.nombre)}</div>
         <div class="export-puntos">${f.total}</div>
       </div>`;
     });
