@@ -971,6 +971,56 @@
         "VISMA",
         "EF"
       ]
+    },
+    {
+      "numero": 4,
+      "nombre": "Carcassonne → Foix",
+      "etapa": [
+        "PEDERSEN",
+        "SIMMONS",
+        "RAÚL G PIERNA",
+        "FRIGO",
+        "DEBRUYNE",
+        "VAUQUELIN",
+        "SEAN QUINN",
+        "TRAEEN",
+        "CASTRILLO",
+        "VACEK"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "TRAEEN",
+        "SEAN QUINN",
+        "VACEK",
+        "POGACAR",
+        "VINGEGAARD",
+        "DEBRUYNE",
+        "EVENEPOEL",
+        "DEL TORO",
+        "AYUSO",
+        "SEIXAS"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "POGACAR",
+        "VINGEGAARD",
+        "SIMMONS",
+        "DEL TORO"
+      ],
+      "montana": [
+        "BAUDIN",
+        "ALEX MOLENAAR",
+        "PRODHOMME",
+        "RAÚL G PIERNA",
+        "FRIGO"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "RED BULL",
+        "EF",
+        "MOVISTAR",
+        "UAE"
+      ]
     }
   ],
   "bonusFinal": null,
