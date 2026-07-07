@@ -60,6 +60,7 @@
         <button class="sub-tab verde" id="btn-data-buscador" onclick="cambiarSubData('buscador')">🔍 ¿Quién tiene a...?</button>
         <button class="sub-tab equipo" id="btn-data-participantes" onclick="cambiarSubData('participantes')">👥 Participantes</button>
         <button class="sub-tab naranja" id="btn-data-sorpresa" onclick="cambiarSubData('sorpresa')">🎁 Sorpresa</button>
+        <button class="sub-tab morado" id="btn-data-rentabilidad" onclick="cambiarSubData('rentabilidad')">💰 Rentabilidad</button>
         <button class="sub-tab neutro" id="btn-data-sistema" onclick="cambiarSubData('sistema')">📖 Sistema de puntos</button>
       </div>
 
@@ -108,6 +109,16 @@
         <h2 style="margin-top:0">🎁 Top 10 corredores SORPRESA</h2>
         <p class="mini" style="margin-top:-8px; margin-bottom:14px;">Corredores que han sumado puntos con los criterios de la porra, pero que <strong>nadie</strong> ha seleccionado en su equipo — puntos que se han quedado sin dueño.</p>
         <div id="tabla-sorpresa">Cargando…</div>
+      </div>
+
+      <div id="sub-data-rentabilidad" class="sub-data" style="display:none">
+        <h2 style="margin-top:0">💰 Rentabilidad — puntos por precio</h2>
+        <p class="mini" style="margin-top:-8px; margin-bottom:14px;">Quién ha dado más puntos por cada punto de precio invertido.</p>
+        <div style="display:flex; gap:8px; margin-bottom:16px;">
+          <button class="secundaria" id="btn-rent-general" onclick="cambiarRentabilidad('general')">Ranking general</button>
+          <button class="secundaria" id="btn-rent-tramo" onclick="cambiarRentabilidad('tramo')">Por tramo de precio</button>
+        </div>
+        <div id="tabla-rentabilidad">Cargando…</div>
       </div>
 
       <div id="sub-data-sistema" class="sub-data" style="display:none">
@@ -168,6 +179,8 @@ async function cargarDatos(){
     pintarGeneral();
     pintarKom();
     pintarSorpresa();
+    document.getElementById('btn-rent-general').classList.add('activa');
+    pintarRentabilidad();
     pintarSistema();
     pintarCalendario();
     llenarSelectorEtapas();
@@ -365,7 +378,7 @@ function toggleDetalleUltima(id){
 // ============ DATA: sub-navegación interna ============
 function cambiarSubData(sub){
   SUB_DATA = sub;
-  ['kom','idealteam','participantes','buscador','sorpresa','sistema'].forEach(s=>{
+  ['kom','idealteam','participantes','buscador','sorpresa','rentabilidad','sistema'].forEach(s=>{
     document.getElementById('sub-data-'+s).style.display = (s===sub) ? 'block' : 'none';
     document.getElementById('btn-data-'+s).classList.toggle('activa', s===sub);
   });
@@ -467,6 +480,74 @@ function pintarSorpresa(){
   html += '</tbody></table>';
   cont.innerHTML = html;
 }
+
+// ============ RENTABILIDAD: puntos por precio invertido ============
+let MODO_RENTABILIDAD = 'general';
+
+function cambiarRentabilidad(modo){
+  MODO_RENTABILIDAD = modo;
+  document.getElementById('btn-rent-general').classList.toggle('activa', modo==='general');
+  document.getElementById('btn-rent-tramo').classList.toggle('activa', modo==='tramo');
+  pintarRentabilidad();
+}
+
+function pintarRentabilidad(){
+  const cont = document.getElementById('tabla-rentabilidad');
+  if(!DATOS.resultados || !DATOS.resultados.length){
+    cont.innerHTML = '<p class="mini">Todavía no hay etapas puntuadas.</p>';
+    return;
+  }
+
+  if(MODO_RENTABILIDAD === 'general'){
+    const ranking = rankingCorredores(DATOS)
+      .map(r => ({ nombre: r.nombre, puntos: r.total, precio: precioDe(r.nombre) }))
+      .filter(r => r.precio > 0)
+      .map(r => ({ ...r, ratio: (r.puntos / r.precio) * 100 }))
+      .sort((a,b) => b.ratio - a.ratio)
+      .slice(0, 20);
+
+    let html = '<table><thead><tr><th></th><th>Corredor</th><th style="text-align:right">Precio</th><th style="text-align:right">Puntos</th><th style="text-align:right">Por 100 invertidos</th></tr></thead><tbody>';
+    ranking.forEach((r,i)=>{
+      const pos = i+1;
+      html += `<tr class="${pos===1?'fila-lider':''}">
+        <td class="pos ${pos<=3?'top'+pos:''}">${medalla(pos)}</td>
+        <td><strong>${r.nombre}</strong></td>
+        <td style="text-align:right" class="mini">${r.precio}</td>
+        <td style="text-align:right" class="mini">${r.puntos}</td>
+        <td style="text-align:right" class="total-puntos">${r.ratio.toFixed(1)}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    cont.innerHTML = html;
+  } else {
+    const mapaPuntos = {};
+    rankingCorredores(DATOS).forEach(r => { mapaPuntos[normaliza(r.nombre)] = r.total; });
+
+    const porTramo = {};
+    CORREDORES_MAESTRO.forEach(nombre => {
+      const precio = PRECIOS_CORREDORES[nombre];
+      if(!precio) return;
+      const puntos = mapaPuntos[normaliza(nombre)] || 0;
+      if(!porTramo[precio] || puntos > porTramo[precio].puntos){
+        porTramo[precio] = { nombre, puntos };
+      }
+    });
+
+    const tramos = Object.keys(porTramo).map(Number).sort((a,b)=>a-b);
+    let html = '<table><thead><tr><th style="text-align:right">Precio</th><th>Mejor corredor de ese precio</th><th style="text-align:right">Puntos</th></tr></thead><tbody>';
+    tramos.forEach(precio=>{
+      const t = porTramo[precio];
+      html += `<tr>
+        <td style="text-align:right" class="mini">${precio}</td>
+        <td><strong>${t.nombre}</strong></td>
+        <td style="text-align:right" class="total-puntos">${t.puntos}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    cont.innerHTML = html;
+  }
+}
+
 function filaPuntos(etiqueta, valores){
   return `<div class="fila-etapa" style="grid-template-columns: 1fr; gap:6px; cursor:default;">
     <div><strong>${etiqueta}</strong></div>
