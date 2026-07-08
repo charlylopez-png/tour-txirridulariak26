@@ -1021,6 +1021,56 @@
         "MOVISTAR",
         "UAE"
       ]
+    },
+    {
+      "numero": 5,
+      "nombre": "Lannemezan → Pau",
+      "etapa": [
+        "KOOIJ",
+        "MAX KANTER",
+        "MERLIER",
+        "ARTZ",
+        "PHILIPSEN",
+        "GIRMAY",
+        "PEDERSEN",
+        "FRETIN",
+        "TURGIS",
+        "WAERENSKJOLD"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "TRAEEN",
+        "SEAN QUINN",
+        "VACEK",
+        "POGACAR",
+        "VINGEGAARD",
+        "DEBRUYNE",
+        "EVENEPOEL",
+        "DEL TORO",
+        "AYUSO",
+        "SEIXAS"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "GIRMAY",
+        "MAX KANTER",
+        "PHILIPSEN",
+        "KOOIJ"
+      ],
+      "montana": [
+        "BAUDIN",
+        "ALEX MOLENAAR",
+        "PRODHOMME",
+        "RAÚL G PIERNA",
+        "FRIGO"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "RED BULL",
+        "EF",
+        "MOVISTAR",
+        "UAE"
+      ]
     }
   ],
   "bonusFinal": null,
