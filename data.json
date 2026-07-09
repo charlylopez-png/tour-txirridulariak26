@@ -1071,6 +1071,56 @@
         "MOVISTAR",
         "UAE"
       ]
+    },
+    {
+      "numero": 6,
+      "nombre": "Pau → Gavarnie Gèdre",
+      "etapa": [
+        "POGACAR",
+        "VINGEGAARD",
+        "DEL TORO",
+        "EVENEPOEL",
+        "SEIXAS",
+        "LIPOWITZ",
+        "AYUSO",
+        "SKJELMOSE",
+        "LENNY MTNZ",
+        "KUSS"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "DEL TORO",
+        "EVENEPOEL",
+        "AYUSO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "LENNY MTNZ",
+        "SKJELMOSE",
+        "VACEK"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "MAX KANTER",
+        "GIRMAY",
+        "PHILIPSEN",
+        "POGACAR"
+      ],
+      "montana": [
+        "POGACAR",
+        "VINGEGAARD",
+        "LENNY MTNZ",
+        "BAUDIN",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "RED BULL",
+        "UAE",
+        "VISMA",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
