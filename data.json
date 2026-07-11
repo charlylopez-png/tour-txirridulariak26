@@ -1121,6 +1121,56 @@
         "VISMA",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 7,
+      "nombre": "Hagetmau → Bordeaux",
+      "etapa": [
+        "MERLIER",
+        "WAERENSKJOLD",
+        "GIRMAY",
+        "MAX KANTER",
+        "PHILIPSEN",
+        "BAUHAUS",
+        "ARTZ",
+        "DORIAN GODON",
+        "PEDERSEN",
+        "VAN ASBROECK"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "DEL TORO",
+        "EVENEPOEL",
+        "AYUSO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "LENNY MTNZ",
+        "SKJELMOSE",
+        "VACEK"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "GIRMAY",
+        "MAX KANTER",
+        "MERLIER",
+        "PHILIPSEN"
+      ],
+      "montana": [
+        "POGACAR",
+        "VINGEGAARD",
+        "LENNY MTNZ",
+        "BAUDIN",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "RED BULL",
+        "UAE",
+        "VISMA",
+        "EF"
+      ]
     }
   ],
   "bonusFinal": null,
