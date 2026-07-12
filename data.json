@@ -1171,6 +1171,56 @@
         "VISMA",
         "EF"
       ]
+    },
+    {
+      "numero": 8,
+      "nombre": "Périgueux → Bergerac",
+      "etapa": [
+        "MERLIER",
+        "GIRMAY",
+        "KOOIJ",
+        "PHILIPSEN",
+        "BITTNER",
+        "PLUIMERS",
+        "ACKERMANN",
+        "RUSSO",
+        "MAX KANTER",
+        "FRETIN"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "DEL TORO",
+        "EVENEPOEL",
+        "AYUSO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "LENNY MTNZ",
+        "SKJELMOSE",
+        "VACEK"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "MERLIER",
+        "GIRMAY",
+        "PHILIPSEN",
+        "MAX KANTER"
+      ],
+      "montana": [
+        "POGACAR",
+        "VINGEGAARD",
+        "LENNY MTNZ",
+        "BAUDIN",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "RED BULL",
+        "UAE",
+        "VISMA",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
