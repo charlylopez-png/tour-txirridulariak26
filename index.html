@@ -29,9 +29,12 @@
     <div class="tarjeta">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
         <h2 style="margin:0" id="titulo-clasificacion">🏆 Clasificación</h2>
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
           <button class="secundaria" id="btn-clas-general" onclick="cambiarClasificacion('general')">General</button>
           <button class="secundaria" id="btn-clas-ultima" onclick="cambiarClasificacion('ultima')">Última etapa</button>
+          <span style="width:1px; height:20px; background:var(--linea); margin:0 2px;"></span>
+          <button class="secundaria menor" id="btn-clas-montana" onclick="cambiarClasificacion('montana')">⛰️ Montaña</button>
+          <button class="secundaria menor" id="btn-clas-regularidad" onclick="cambiarClasificacion('regularidad')">🟢 Regularidad</button>
         </div>
       </div>
       <div id="tabla-general">Cargando…</div>
@@ -268,26 +271,51 @@ function etiquetaUltimaEtapa(){
 }
 
 function pintarGeneral(){
-  const btnG = document.getElementById('btn-clas-general');
-  const btnU = document.getElementById('btn-clas-ultima');
-  btnG.style.borderColor = MODO_CLASIFICACION==='general' ? 'var(--amarillo)' : '';
-  btnG.style.color = MODO_CLASIFICACION==='general' ? 'var(--amarillo)' : '';
-  btnU.style.borderColor = MODO_CLASIFICACION==='ultima' ? 'var(--amarillo)' : '';
-  btnU.style.color = MODO_CLASIFICACION==='ultima' ? 'var(--amarillo)' : '';
+  const botones = { general:'btn-clas-general', ultima:'btn-clas-ultima', montana:'btn-clas-montana', regularidad:'btn-clas-regularidad' };
+  Object.entries(botones).forEach(([modo, idBtn])=>{
+    const btn = document.getElementById(idBtn);
+    const activo = MODO_CLASIFICACION === modo;
+    btn.style.borderColor = activo ? 'var(--amarillo)' : '';
+    btn.style.color = activo ? 'var(--amarillo)' : '';
+  });
 
   const titulo = document.getElementById('titulo-clasificacion');
   const etiqueta = etiquetaUltimaEtapa();
-  if(MODO_CLASIFICACION === 'general'){
-    titulo.textContent = '🏆 General' + (etiqueta ? ' tras ' + etiqueta : '');
-  } else {
-    titulo.textContent = '🏆 ' + (etiqueta || 'Última etapa');
-  }
+  if(MODO_CLASIFICACION === 'general') titulo.textContent = '🏆 General' + (etiqueta ? ' tras ' + etiqueta : '');
+  else if(MODO_CLASIFICACION === 'ultima') titulo.textContent = '🏆 ' + (etiqueta || 'Última etapa');
+  else if(MODO_CLASIFICACION === 'montana') titulo.textContent = '⛰️ Clasificación de la montaña (secundaria)';
+  else if(MODO_CLASIFICACION === 'regularidad') titulo.textContent = '🟢 Clasificación de la regularidad (secundaria)';
 
   const cont = document.getElementById('tabla-general');
   if(!CLASIFICACION.length){ cont.innerHTML = '<p class="mini">Aún no hay participantes cargados.</p>'; return; }
 
   if(MODO_CLASIFICACION === 'general') pintarClasificacionGeneral(cont);
-  else pintarClasificacionUltimaEtapa(cont);
+  else if(MODO_CLASIFICACION === 'ultima') pintarClasificacionUltimaEtapa(cont);
+  else pintarClasificacionCategoria(cont, MODO_CLASIFICACION);
+}
+
+function pintarClasificacionCategoria(cont, campo){
+  if(!DATOS.resultados || !DATOS.resultados.length){
+    cont.innerHTML = '<p class="mini">Todavía no hay etapas puntuadas.</p>';
+    return;
+  }
+  const filas = DATOS.participantes.map(p => ({
+    id: p.id, nombre: p.nombre,
+    puntos: puntosPorCategoriaParticipante(p, DATOS)[campo]
+  })).sort((a,b)=>b.puntos-a.puntos);
+  filas.forEach((f,i)=>f.posicion=i+1);
+
+  let html = '<div class="lista-clasificacion">';
+  filas.forEach(f=>{
+    const claseTop = f.posicion<=3 ? 'top'+f.posicion : '';
+    html += `<div class="export-fila ${claseTop}">
+      <div class="export-rank">${f.posicion}</div>
+      <div class="export-nombre">${nombreConInsignia(f.nombre, f.id)}</div>
+      <div class="export-puntos">${f.puntos}</div>
+    </div>`;
+  });
+  html += '</div>';
+  cont.innerHTML = html;
 }
 
 function calcularPuntosIdealAcumulado(){
@@ -969,6 +997,18 @@ function svgHistorialPosiciones(historial, totalParticipantes){
   </svg>`;
 }
 
+// Posición SOLO de esa jornada (sin acumular), para comparar con la posición general
+function historialPosicionesDiarias(id){
+  const n = CLASIFICACION[0]?.porEtapa.length || 0;
+  const historial = [];
+  for(let e=0; e<n; e++){
+    const ranking = CLASIFICACION.map(f => ({ id: f.id, puntosDia: f.porEtapa[e].puntosDia }))
+      .sort((a,b)=>b.puntosDia-a.puntosDia);
+    historial.push(ranking.findIndex(r=>r.id===id) + 1);
+  }
+  return historial;
+}
+
 function pintarResumenParticipante(fila){
   let html = `<div style="margin-bottom:16px;">
     <span class="pastilla amarillo">Posición ${fila.posicion}ª</span>
@@ -978,13 +1018,22 @@ function pintarResumenParticipante(fila){
   html += `<p class="mini"><strong>Equipos:</strong> ${(fila.equipos||[]).join(' · ')}</p>`;
 
   const historial = historialPosiciones(fila.id);
+  const historialDia = historialPosicionesDiarias(fila.id);
   html += '<h3 class="mini" style="text-transform:uppercase; letter-spacing:.4px; color:var(--texto); font-family:Oswald,sans-serif; margin:18px 0 10px;">Evolución de la posición general</h3>';
   html += svgHistorialPosiciones(historial, CLASIFICACION.length);
 
   if(fila.porEtapa.length){
-    html += '<table style="margin-top:14px"><thead><tr><th>Etapa</th><th style="text-align:right">Puntos día</th><th style="text-align:right">Acumulado</th><th style="text-align:right">Posición</th></tr></thead><tbody>';
+    html += '<p class="mini" style="margin-top:14px;">Toca una etapa para ver el desglose corredor a corredor de ese día.</p>';
+    html += '<table><thead><tr><th>Etapa</th><th style="text-align:right">Pts día</th><th style="text-align:right">Pos. etapa</th><th style="text-align:right">Acumulado</th><th style="text-align:right">Pos. general</th></tr></thead><tbody>';
     fila.porEtapa.forEach((e,i)=>{
-      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre:''}</td><td style="text-align:right">${e.puntosDia}</td><td style="text-align:right" class="total-puntos">${e.acumulado}</td><td style="text-align:right">${historial[i].posicion}º</td></tr>`;
+      html += `<tr class="fila-clicable" onclick="toggleDetalleResumenEtapa('${fila.id}', ${e.numero})">
+        <td>${e.numero}${e.nombre ? ' · '+e.nombre:''}</td>
+        <td style="text-align:right">${e.puntosDia}</td>
+        <td style="text-align:right" class="mini">${historialDia[i]}º</td>
+        <td style="text-align:right" class="total-puntos">${e.acumulado}</td>
+        <td style="text-align:right" class="mini">${historial[i].posicion}º</td>
+      </tr>
+      <tr id="detalle-resumen-${fila.id}-${e.numero}" class="fila-detalle" style="display:none"><td colspan="5"><div id="detalle-resumen-cont-${fila.id}-${e.numero}"></div></td></tr>`;
     });
     html += '</tbody></table>';
   } else {
@@ -995,6 +1044,26 @@ function pintarResumenParticipante(fila){
     html += `<p class="mini" style="margin-top:12px"><strong>Bonus clasificaciones finales:</strong> +${fila.puntosBonus} pts (${fila.detalleBonus.map(d=>d.nombre+' +'+d.puntos).join(', ')})</p>`;
   }
   return html;
+}
+
+function toggleDetalleResumenEtapa(participanteId, numero){
+  const fila = document.getElementById(`detalle-resumen-${participanteId}-${numero}`);
+  const contDet = document.getElementById(`detalle-resumen-cont-${participanteId}-${numero}`);
+  if(!fila) return;
+  if(fila.style.display !== 'none'){ fila.style.display = 'none'; return; }
+  fila.style.display = 'table-row';
+  if(!contDet.dataset.cargado){
+    const participante = DATOS.participantes.find(p=>p.id===participanteId);
+    const etapa = DATOS.resultados.find(r=>r.numero===numero);
+    const detalle = detalleContribucionEtapa(participante, etapa, obtenerTablaPuntos(DATOS));
+    let h = '<div class="desglose-equipo">';
+    detalle.forEach(d=>{
+      h += `<div class="fila-desglose"><span>${d.tipo==='equipo' ? '🚩' : '🚴'} ${d.nombre}</span><span class="total-puntos">${d.puntos}</span></div>`;
+    });
+    h += '</div>';
+    contDet.innerHTML = h;
+    contDet.dataset.cargado = '1';
+  }
 }
 
 function pintarEquipoParticipante(fila){
