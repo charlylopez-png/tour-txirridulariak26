@@ -1066,13 +1066,73 @@ function toggleDetalleResumenEtapa(participanteId, numero){
   }
 }
 
+// Desglose de CADA corredor/equipo de un participante, separado por categoría
+// (etapa / general / regularidad / montaña), no solo el total combinado.
+function desgloseCategoriasParticipante(participante, datos){
+  const tabla = obtenerTablaPuntos(datos);
+  const resultados = datos.resultados || [];
+  const bonusFinal = datos.bonusFinal || null;
+
+  const corredores = {};
+  (participante.corredores || []).forEach(c => { corredores[c] = { nombre: c, etapa:0, general:0, regularidad:0, montana:0 }; });
+  resultados.forEach(r=>{
+    Object.keys(corredores).forEach(c=>{
+      corredores[c].etapa += puntosDeLista(r.etapa, c, tabla.etapa);
+      corredores[c].general += puntosDeLista(r.general, c, tabla.generalDiaria);
+      corredores[c].regularidad += puntosDeLista(r.puntos, c, tabla.regularidadDiaria);
+      corredores[c].montana += puntosDeLista(r.montana, c, tabla.montanaDiaria);
+    });
+  });
+  if(bonusFinal){
+    Object.keys(corredores).forEach(c=>{
+      corredores[c].general += puntosDeLista(bonusFinal.general, c, tabla.generalFinal);
+      corredores[c].regularidad += puntosDeLista(bonusFinal.puntos, c, tabla.regularidadFinal);
+      corredores[c].montana += puntosDeLista(bonusFinal.montana, c, tabla.montanaFinal);
+    });
+  }
+  const filasCorredores = Object.values(corredores)
+    .map(c => ({ ...c, total: c.etapa + c.general + c.regularidad + c.montana }))
+    .sort((a,b)=>b.total-a.total);
+
+  const equipos = {};
+  (participante.equipos || []).forEach(e => { equipos[e] = { nombre: e, total: 0 }; });
+  resultados.forEach(r=>{
+    Object.keys(equipos).forEach(e=>{
+      equipos[e].total += puntosDeLista(r.equipos, e, tabla.equiposDiaria) + puntosDeLista(r.etapaEquipos, e, tabla.etapa);
+    });
+  });
+  if(bonusFinal){
+    Object.keys(equipos).forEach(e=>{
+      equipos[e].total += puntosDeLista(bonusFinal.equipos, e, tabla.equiposFinal);
+    });
+  }
+  const filasEquipos = Object.values(equipos).sort((a,b)=>b.total-a.total);
+
+  return { corredores: filasCorredores, equipos: filasEquipos };
+}
+
 function pintarEquipoParticipante(fila){
   const participante = DATOS.participantes.find(p=>p.id===fila.id);
-  const detalle = detalleContribucionGeneral(participante, DATOS);
-  let html = '<p class="mini" style="margin-bottom:12px;">Puntos acumulados en todo el Tour, corredor a corredor:</p>';
+  const { corredores, equipos } = desgloseCategoriasParticipante(participante, DATOS);
+
+  let html = '<p class="mini" style="margin-bottom:12px;">Puntos acumulados en todo el Tour, desglosados por categoría:</p>';
+  html += '<table><thead><tr><th>Corredor</th><th style="text-align:right">🚴 Etapa</th><th style="text-align:right">👑 General</th><th style="text-align:right">🟢 Regul.</th><th style="text-align:right">🔴 Montaña</th><th style="text-align:right">Total</th></tr></thead><tbody>';
+  corredores.forEach(c=>{
+    html += `<tr>
+      <td><strong>${c.nombre}</strong></td>
+      <td style="text-align:right" class="mini">${c.etapa || '—'}</td>
+      <td style="text-align:right" class="mini">${c.general || '—'}</td>
+      <td style="text-align:right" class="mini">${c.regularidad || '—'}</td>
+      <td style="text-align:right" class="mini">${c.montana || '—'}</td>
+      <td style="text-align:right" class="total-puntos">${c.total}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+
+  html += '<h3 class="mini" style="text-transform:uppercase; letter-spacing:.4px; color:var(--texto); font-family:Oswald,sans-serif; margin:18px 0 10px;">🚩 Equipos</h3>';
   html += '<div class="desglose-equipo">';
-  detalle.forEach(d=>{
-    html += `<div class="fila-desglose"><span>${d.tipo==='equipo' ? '🚩' : '🚴'} ${d.nombre}</span><span class="total-puntos">${d.puntos}</span></div>`;
+  equipos.forEach(e=>{
+    html += `<div class="fila-desglose"><span>🚩 ${e.nombre}</span><span class="total-puntos">${e.total}</span></div>`;
   });
   html += '</div>';
   return html;
@@ -1083,37 +1143,62 @@ function pintarAnaliticaParticipante(fila){
   const mapaPuntos = {};
   rankingCorredores(DATOS).forEach(r => { mapaPuntos[normaliza(r.nombre)] = r.total; });
 
-  const filas = (participante.corredores||[]).map(corredor=>{
+  // Agrupa los corredores del participante por precio, porque dentro del mismo
+  // tramo no se puede comparar a todos contra el mismo líder (no podrías haber
+  // fichado al mismo corredor varias veces) — se comparan contra el 1º, 2º, 3º... del tramo.
+  const porPrecio = {};
+  (participante.corredores || []).forEach(corredor=>{
     const precio = precioDe(corredor);
+    if(!porPrecio[precio]) porPrecio[precio] = [];
+    porPrecio[precio].push(corredor);
+  });
+
+  const filas = [];
+  Object.keys(porPrecio).forEach(precioStr=>{
+    const precio = Number(precioStr);
     const compañeros = CORREDORES_MAESTRO.filter(n => PRECIOS_CORREDORES[n] === precio);
     const tierRanking = compañeros
       .map(n => ({ nombre: n, puntos: mapaPuntos[normaliza(n)] || 0 }))
       .sort((a,b)=>b.puntos-a.puntos);
-    const misPuntos = mapaPuntos[normaliza(corredor)] || 0;
-    const posicionEnTier = tierRanking.findIndex(t => normaliza(t.nombre) === normaliza(corredor)) + 1;
-    const lider = tierRanking[0];
-    const diferencia = (lider ? lider.puntos : 0) - misPuntos;
-    return { corredor, precio, misPuntos, posicionEnTier, totalEnTier: tierRanking.length, liderNombre: lider ? lider.nombre : '—', liderPuntos: lider ? lider.puntos : 0, diferencia };
+
+    const misCorredores = porPrecio[precio]
+      .map(c => ({ corredor: c, misPuntos: mapaPuntos[normaliza(c)] || 0 }))
+      .sort((a,b)=>b.misPuntos-a.misPuntos);
+
+    misCorredores.forEach((mio, idx)=>{
+      const comparador = tierRanking[idx]; // 1º del tramo para tu mejor a ese precio, 2º para el siguiente, etc.
+      const posicionEnTier = tierRanking.findIndex(t => normaliza(t.nombre) === normaliza(mio.corredor)) + 1;
+      const diferencia = (comparador ? comparador.puntos : 0) - mio.misPuntos;
+      filas.push({
+        corredor: mio.corredor, precio, misPuntos: mio.misPuntos,
+        posicionEnTier, totalEnTier: tierRanking.length,
+        comparadorRango: idx+1,
+        comparadorNombre: comparador ? comparador.nombre : '—',
+        comparadorPuntos: comparador ? comparador.puntos : 0,
+        diferencia
+      });
+    });
   });
 
-  const totalDiferencia = filas.reduce((s,f)=>s+f.diferencia, 0);
+  filas.sort((a,b)=> b.precio - a.precio);
+  const totalDiferencia = filas.reduce((s,f)=>s+Math.max(0,f.diferencia), 0);
 
-  let html = `<p class="mini" style="margin-bottom:14px;">Cada corredor tuyo, comparado con el mejor de su mismo precio. La diferencia es lo que "te has dejado por el camino" en esa elección.</p>`;
+  let html = `<p class="mini" style="margin-bottom:14px;">Cada corredor tuyo, comparado con el corredor de su mismo precio que ocupa ese mismo puesto dentro de tu selección (tu mejor a ese precio vs el 1º del tramo, tu segundo vs el 2º, etc.) — así no se compara dos veces contra el mismo líder.</p>`;
   if(totalDiferencia > 0){
     html += `<div style="margin-bottom:14px;"><span class="pastilla lunares">-${totalDiferencia} pts en total frente al ideal por tramo</span></div>`;
   } else {
-    html += `<div style="margin-bottom:14px;"><span class="pastilla verde">¡Líder en todos tus tramos de precio! 0 pts de diferencia</span></div>`;
+    html += `<div style="margin-bottom:14px;"><span class="pastilla verde">¡Máximo aprovechamiento en todos tus tramos de precio!</span></div>`;
   }
-  html += '<table><thead><tr><th>Tu corredor</th><th style="text-align:right">Precio</th><th style="text-align:right">Tus pts</th><th>Líder del tramo</th><th style="text-align:right">Sus pts</th><th style="text-align:right">Diferencia</th></tr></thead><tbody>';
+  html += '<table><thead><tr><th>Tu corredor</th><th style="text-align:right">Precio</th><th style="text-align:right">Tus pts</th><th>Comparado con</th><th style="text-align:right">Sus pts</th><th style="text-align:right">Diferencia</th></tr></thead><tbody>';
   filas.forEach(f=>{
-    const esLider = f.diferencia === 0;
+    const esLider = f.diferencia <= 0;
     html += `<tr class="${esLider ? 'fila-lider' : ''}">
       <td><strong>${f.corredor}</strong></td>
       <td style="text-align:right" class="mini">${f.precio}</td>
       <td style="text-align:right" class="mini">${f.misPuntos}</td>
-      <td class="mini">${f.liderNombre} <span style="color:var(--texto-tenue)">(${f.posicionEnTier}º de ${f.totalEnTier})</span></td>
-      <td style="text-align:right" class="mini">${f.liderPuntos}</td>
-      <td style="text-align:right; ${f.diferencia>0?'color:var(--lunares)':''}" class="total-puntos">${f.diferencia>0 ? '-'+f.diferencia : '✓ líder'}</td>
+      <td class="mini">${f.comparadorNombre} <span style="color:var(--texto-tenue)">(${f.comparadorRango}º del tramo · tú vas ${f.posicionEnTier}º de ${f.totalEnTier})</span></td>
+      <td style="text-align:right" class="mini">${f.comparadorPuntos}</td>
+      <td style="text-align:right; ${f.diferencia>0?'color:var(--lunares)':''}" class="total-puntos">${f.diferencia>0 ? '-'+f.diferencia : '✓'}</td>
     </tr>`;
   });
   html += '</tbody></table>';
