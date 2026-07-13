@@ -262,10 +262,59 @@ function detalleContribucionEtapa(participante, etapaResultado, tabla){
   return filas;
 }
 
+// Puntos ganados por UN participante, separados por categoría "de líder"
+// (General, Regularidad, Montaña) — sin mezclar con etapa ni equipos.
+// Se usa para determinar quién lleva cada "maillot" del grupo.
+function puntosPorCategoriaParticipante(participante, datos){
+  const tabla = obtenerTablaPuntos(datos);
+  const resultados = datos.resultados || [];
+  const bonusFinal = datos.bonusFinal || null;
+  let general = 0, regularidad = 0, montana = 0;
+
+  resultados.forEach(r=>{
+    (participante.corredores || []).forEach(c=>{
+      general += puntosDeLista(r.general, c, tabla.generalDiaria);
+      regularidad += puntosDeLista(r.puntos, c, tabla.regularidadDiaria);
+      montana += puntosDeLista(r.montana, c, tabla.montanaDiaria);
+    });
+  });
+  if(bonusFinal){
+    (participante.corredores || []).forEach(c=>{
+      general += puntosDeLista(bonusFinal.general, c, tabla.generalFinal);
+      regularidad += puntosDeLista(bonusFinal.puntos, c, tabla.regularidadFinal);
+      montana += puntosDeLista(bonusFinal.montana, c, tabla.montanaFinal);
+    });
+  }
+  return { general, regularidad, montana };
+}
+
+// Devuelve los ids de los participantes que lideran cada "maillot" del grupo
+// (empates: se incluyen todos los que compartan el máximo).
+function calcularLideresJersey(datos){
+  const porParticipante = (datos.participantes || []).map(p => ({
+    id: p.id,
+    ...puntosPorCategoriaParticipante(p, datos)
+  }));
+
+  function lideres(campo){
+    if(!porParticipante.length) return [];
+    const max = Math.max(...porParticipante.map(p => p[campo]));
+    if(max <= 0) return [];
+    return porParticipante.filter(p => p[campo] === max).map(p => p.id);
+  }
+
+  return {
+    general: lideres('general'),
+    regularidad: lideres('regularidad'),
+    montana: lideres('montana'),
+  };
+}
+
 if (typeof module !== "undefined") {
   module.exports = {
     TABLA_PUNTOS_DEFECTO, obtenerTablaPuntos, calcularClasificacion,
     puntosEtapaParticipante, puntosBonusFinal, normaliza, rankingCorredores, rankingEquipos,
-    detalleContribucionGeneral, detalleContribucionEtapa
+    detalleContribucionGeneral, detalleContribucionEtapa,
+    puntosPorCategoriaParticipante, calcularLideresJersey
   };
 }
