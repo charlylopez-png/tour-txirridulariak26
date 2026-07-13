@@ -1221,6 +1221,56 @@
         "VISMA",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 9,
+      "nombre": "Malemort → Ussel",
+      "etapa": [
+        "VAN DER POEL",
+        "TOBIAS JOHANNESSEN",
+        "TOM PIDCOCK",
+        "BAUDIN",
+        "GANNA",
+        "PEDERSEN",
+        "MATTHEWS",
+        "BREUILLARD",
+        "JORDAN JEGAT",
+        "SEAN QUINN"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "DEL TORO",
+        "EVENEPOEL",
+        "AYUSO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "LENNY MTNZ",
+        "SKJELMOSE",
+        "BERNAL"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "GIRMAY",
+        "MERLIER",
+        "PHILIPSEN",
+        "MAX KANTER"
+      ],
+      "montana": [
+        "POGACAR",
+        "VINGEGAARD",
+        "LENNY MTNZ",
+        "BAUDIN",
+        "V PARET PEINTRE"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "VISMA",
+        "RED BULL",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
