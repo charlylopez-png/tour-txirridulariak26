@@ -1271,6 +1271,56 @@
         "RED BULL",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 10,
+      "nombre": "Aurillac → Le Lioran",
+      "etapa": [
+        "POGACAR",
+        "EVENEPOEL",
+        "SEIXAS",
+        "LIPOWITZ",
+        "AYUSO",
+        "SKJELMOSE",
+        "VINGEGAARD",
+        "DEL TORO",
+        "TOM PIDCOCK",
+        "LENNY MTNZ"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "AYUSO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "DEL TORO",
+        "SKJELMOSE",
+        "LENNY MTNZ",
+        "TOM PIDCOCK"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "GIRMAY",
+        "MERLIER",
+        "PHILIPSEN",
+        "MAX KANTER"
+      ],
+      "montana": [
+        "POGACAR",
+        "VINGEGAARD",
+        "CARAPAZ",
+        "V PARET PEINTRE",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "VISMA",
+        "RED BULL",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
