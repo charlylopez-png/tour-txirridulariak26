@@ -516,6 +516,7 @@ footer.pie{
 .sub-tab.neutro{ border-color: #6b7278; color: var(--texto-tenue); }
 .sub-tab.naranja{ border-color: #ff8c42; color: #ff8c42; }
 .sub-tab.morado{ border-color: #a374db; color: #a374db; }
+.sub-tab.navy{ border-color: #4a90d9; color: #4a90d9; display:inline-flex; align-items:center; }
 
 .sub-tab.activa.lunares{ background: var(--lunares); color:#fff; }
 .sub-tab.activa.amarillo{ background: var(--amarillo); color:#17140a; }
@@ -524,6 +525,7 @@ footer.pie{
 .sub-tab.activa.neutro{ background: #4a5158; color:#fff; }
 .sub-tab.activa.naranja{ background: #ff8c42; color:#1a0f05; }
 .sub-tab.activa.morado{ background: #a374db; color:#1a0f2a; }
+.sub-tab.activa.navy{ background: #4a90d9; color:#fff; }
 
 /* Texto algo mayor en las tarjetas de contenido (pedido para DATA, aplica en general) */
 .tarjeta h2{ font-size:16.5px; }

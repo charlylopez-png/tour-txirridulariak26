@@ -64,6 +64,13 @@
         <button class="sub-tab equipo" id="btn-data-participantes" onclick="cambiarSubData('participantes')">👥 Participantes</button>
         <button class="sub-tab naranja" id="btn-data-sorpresa" onclick="cambiarSubData('sorpresa')">🎁 Sorpresa</button>
         <button class="sub-tab morado" id="btn-data-rentabilidad" onclick="cambiarSubData('rentabilidad')">💰 Rentabilidad</button>
+        <button class="sub-tab navy" id="btn-data-var" onclick="cambiarSubData('var')">
+          <svg width="17" height="15" viewBox="0 0 18 16" style="vertical-align:middle; margin-right:5px;">
+            <rect x="0.5" y="0.5" width="17" height="11.5" rx="1.2" fill="#fff" stroke="#1c3f5f" stroke-width="1.4"/>
+            <text x="9" y="9.2" font-size="5.2" font-weight="700" fill="#1c3f5f" text-anchor="middle" font-family="Arial, sans-serif">VAR</text>
+            <polygon points="6,12.3 12,12.3 13.5,15.2 4.5,15.2" fill="#1c3f5f"/>
+          </svg>VAR
+        </button>
         <button class="sub-tab neutro" id="btn-data-sistema" onclick="cambiarSubData('sistema')">📖 Sistema de puntos</button>
       </div>
 
@@ -109,6 +116,7 @@
         <div class="grid-form" style="margin-bottom:16px; max-width:320px;">
           <input type="text" id="buscador-corredor" list="lista-corredores-publica" placeholder="Ej: Pogačar" oninput="buscarCorredor()">
           <datalist id="lista-corredores-publica"></datalist>
+          <datalist id="lista-equipos-publica"></datalist>
         </div>
         <div id="resultado-buscador"></div>
       </div>
@@ -127,6 +135,22 @@
           <button class="secundaria" id="btn-rent-tramo" onclick="cambiarRentabilidad('tramo')">Por tramo de precio</button>
         </div>
         <div id="tabla-rentabilidad">Cargando…</div>
+      </div>
+
+      <div id="sub-data-var" class="sub-data" style="display:none">
+        <h2 style="margin-top:0">🖥️ VAR — comprobador de puntos</h2>
+        <p class="mini" style="margin-top:-8px; margin-bottom:14px;">Repasa etapa a etapa de dónde sale cada punto — de un corredor, un equipo o un participante.</p>
+        <div style="display:flex; gap:8px; margin-bottom:14px;">
+          <button class="secundaria" id="btn-var-corredor" onclick="cambiarVarTipo('corredor')">Corredor</button>
+          <button class="secundaria" id="btn-var-equipo" onclick="cambiarVarTipo('equipo')">Equipo</button>
+          <button class="secundaria" id="btn-var-participante" onclick="cambiarVarTipo('participante')">Participante</button>
+        </div>
+        <div class="grid-form" style="margin-bottom:16px; max-width:320px;">
+          <input type="text" id="var-buscar-corredor" list="lista-corredores-publica" placeholder="Ej: Pogačar" oninput="pintarVAR()">
+          <input type="text" id="var-buscar-equipo" list="lista-equipos-publica" placeholder="Ej: UAE" oninput="pintarVAR()" style="display:none">
+          <select id="var-seleccionar-participante" onchange="pintarVAR()" style="display:none"></select>
+        </div>
+        <div id="tabla-var">Escribe o elige algo para empezar.</div>
       </div>
 
       <div id="sub-data-sistema" class="sub-data" style="display:none">
@@ -191,6 +215,8 @@ async function cargarDatos(){
     pintarSorpresa();
     document.getElementById('btn-rent-general').classList.add('activa');
     pintarRentabilidad();
+    llenarSelectorVarParticipante();
+    document.getElementById('btn-var-corredor').classList.add('activa');
     pintarSistema();
     pintarCalendario();
     llenarSelectorEtapas();
@@ -423,7 +449,7 @@ function toggleDetalleUltima(id){
 // ============ DATA: sub-navegación interna ============
 function cambiarSubData(sub){
   SUB_DATA = sub;
-  ['kom','idealteam','participantes','buscador','sorpresa','rentabilidad','sistema'].forEach(s=>{
+  ['kom','idealteam','participantes','buscador','sorpresa','rentabilidad','var','sistema'].forEach(s=>{
     document.getElementById('sub-data-'+s).style.display = (s===sub) ? 'block' : 'none';
     document.getElementById('btn-data-'+s).classList.toggle('activa', s===sub);
   });
@@ -588,6 +614,127 @@ function pintarRentabilidad(){
         <td style="text-align:right" class="total-puntos">${t.puntos}</td>
       </tr>`;
     });
+    html += '</tbody></table>';
+    cont.innerHTML = html;
+  }
+}
+
+// ============ VAR: comprobador etapa a etapa ============
+let VAR_TIPO = 'corredor';
+
+function llenarSelectorVarParticipante(){
+  const sel = document.getElementById('var-seleccionar-participante');
+  if(!DATOS.participantes.length){ sel.innerHTML = '<option>Sin participantes</option>'; return; }
+  sel.innerHTML = DATOS.participantes.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+}
+
+function cambiarVarTipo(tipo){
+  VAR_TIPO = tipo;
+  ['corredor','equipo','participante'].forEach(t=>{
+    document.getElementById('btn-var-'+t).classList.toggle('activa', t===tipo);
+  });
+  document.getElementById('var-buscar-corredor').style.display = tipo==='corredor' ? 'block' : 'none';
+  document.getElementById('var-buscar-equipo').style.display = tipo==='equipo' ? 'block' : 'none';
+  document.getElementById('var-seleccionar-participante').style.display = tipo==='participante' ? 'block' : 'none';
+  pintarVAR();
+}
+
+function filaVarVacia(numero, nombreEtapa){
+  return `<tr><td>${numero}${nombreEtapa ? ' · '+nombreEtapa : ''}</td><td class="mini">—</td><td style="text-align:right">—</td><td style="text-align:right" class="total-puntos"></td></tr>`;
+}
+
+function pintarVAR(){
+  const cont = document.getElementById('tabla-var');
+  if(!DATOS.resultados || !DATOS.resultados.length){
+    cont.innerHTML = '<p class="mini">Todavía no hay etapas puntuadas.</p>';
+    return;
+  }
+  const tabla = obtenerTablaPuntos(DATOS);
+  const etapas = DATOS.resultados.slice().sort((a,b)=>a.numero-b.numero);
+
+  if(VAR_TIPO === 'corredor'){
+    const nombre = document.getElementById('var-buscar-corredor').value.trim();
+    if(!nombre){ cont.innerHTML = '<p class="mini">Escribe el nombre de un corredor.</p>'; return; }
+    let acumulado = 0, huboAlguno = false;
+    let html = '<table><thead><tr><th>Etapa</th><th>De dónde salen</th><th style="text-align:right">Pts día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
+    etapas.forEach(e=>{
+      const partes = [];
+      const pEtapa = puntosDeLista(e.etapa, nombre, tabla.etapa); if(pEtapa) partes.push(`🚴 Etapa +${pEtapa}`);
+      const pGeneral = puntosDeLista(e.general, nombre, tabla.generalDiaria); if(pGeneral) partes.push(`👑 General +${pGeneral}`);
+      const pPuntos = puntosDeLista(e.puntos, nombre, tabla.regularidadDiaria); if(pPuntos) partes.push(`🟢 Regularidad +${pPuntos}`);
+      const pMontana = puntosDeLista(e.montana, nombre, tabla.montanaDiaria); if(pMontana) partes.push(`🔴 Montaña +${pMontana}`);
+      const total = pEtapa + pGeneral + pPuntos + pMontana;
+      if(total>0) huboAlguno = true;
+      acumulado += total;
+      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre : ''}</td><td class="mini">${partes.join(' · ') || '—'}</td><td style="text-align:right">${total || '—'}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+    });
+    if(DATOS.bonusFinal){
+      const bf = DATOS.bonusFinal;
+      const pGeneralF = puntosDeLista(bf.general, nombre, tabla.generalFinal);
+      const pPuntosF = puntosDeLista(bf.puntos, nombre, tabla.regularidadFinal);
+      const pMontanaF = puntosDeLista(bf.montana, nombre, tabla.montanaFinal);
+      const totalF = pGeneralF + pPuntosF + pMontanaF;
+      if(totalF > 0){
+        huboAlguno = true;
+        acumulado += totalF;
+        const partesF = [];
+        if(pGeneralF) partesF.push(`👑 General final +${pGeneralF}`);
+        if(pPuntosF) partesF.push(`🟢 Regularidad final +${pPuntosF}`);
+        if(pMontanaF) partesF.push(`🔴 Montaña final +${pMontanaF}`);
+        html += `<tr class="fila-lider"><td><strong>Bonus final</strong></td><td class="mini">${partesF.join(' · ')}</td><td style="text-align:right">${totalF}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+      }
+    }
+    html += '</tbody></table>';
+    if(!huboAlguno) html = `<p class="mini">"${nombre}" no ha puntuado en ninguna etapa (o el nombre no coincide con tu Excel — revisa la ortografía).</p>` + html;
+    cont.innerHTML = html;
+
+  } else if(VAR_TIPO === 'equipo'){
+    const nombre = document.getElementById('var-buscar-equipo').value.trim();
+    if(!nombre){ cont.innerHTML = '<p class="mini">Escribe el nombre de un equipo.</p>'; return; }
+    let acumulado = 0, huboAlguno = false;
+    let html = '<table><thead><tr><th>Etapa</th><th>De dónde salen</th><th style="text-align:right">Pts día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
+    etapas.forEach(e=>{
+      const partes = [];
+      const pEquipo = puntosDeLista(e.equipos, nombre, tabla.equiposDiaria); if(pEquipo) partes.push(`🚩 Equipos +${pEquipo}`);
+      const pEtapaEquipo = puntosDeLista(e.etapaEquipos, nombre, tabla.etapa); if(pEtapaEquipo) partes.push(`🚴 Etapa (CRE) +${pEtapaEquipo}`);
+      const total = pEquipo + pEtapaEquipo;
+      if(total>0) huboAlguno = true;
+      acumulado += total;
+      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre : ''}</td><td class="mini">${partes.join(' · ') || '—'}</td><td style="text-align:right">${total || '—'}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+    });
+    if(DATOS.bonusFinal){
+      const pEquipoF = puntosDeLista(DATOS.bonusFinal.equipos, nombre, tabla.equiposFinal);
+      if(pEquipoF > 0){
+        huboAlguno = true;
+        acumulado += pEquipoF;
+        html += `<tr class="fila-lider"><td><strong>Bonus final</strong></td><td class="mini">🚩 Equipos final +${pEquipoF}</td><td style="text-align:right">${pEquipoF}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+      }
+    }
+    html += '</tbody></table>';
+    if(!huboAlguno) html = `<p class="mini">"${nombre}" no ha puntuado en ninguna etapa (o el nombre no coincide con tu Excel — revisa la ortografía).</p>` + html;
+    cont.innerHTML = html;
+
+  } else {
+    const id = document.getElementById('var-seleccionar-participante').value;
+    const participante = DATOS.participantes.find(p=>p.id===id);
+    if(!participante){ cont.innerHTML = '<p class="mini">Elige un participante.</p>'; return; }
+    let acumulado = 0;
+    let html = '<table><thead><tr><th>Etapa</th><th>De dónde salen</th><th style="text-align:right">Pts día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
+    etapas.forEach(e=>{
+      const contribuciones = detalleContribucionEtapa(participante, e, tabla).filter(d=>d.puntos>0);
+      const total = contribuciones.reduce((s,d)=>s+d.puntos,0);
+      acumulado += total;
+      const partes = contribuciones.map(d=>`${d.tipo==='equipo' ? '🚩' : '🚴'} ${d.nombre} +${d.puntos}`);
+      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre : ''}</td><td class="mini">${partes.join(' · ') || '—'}</td><td style="text-align:right">${total || '—'}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+    });
+    if(DATOS.bonusFinal){
+      const { total: totalF, detalle: detalleF } = puntosBonusFinal(participante, DATOS.bonusFinal, tabla);
+      if(totalF > 0){
+        acumulado += totalF;
+        const partesF = detalleF.map(d=>`${d.tipo.includes('equipo') ? '🚩' : '🚴'} ${d.nombre} +${d.puntos}`);
+        html += `<tr class="fila-lider"><td><strong>Bonus final</strong></td><td class="mini">${partesF.join(' · ')}</td><td style="text-align:right">${totalF}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+      }
+    }
     html += '</tbody></table>';
     cont.innerHTML = html;
   }
@@ -1282,6 +1429,8 @@ document.querySelectorAll('nav.pestañas button').forEach(btn=>{
 
 document.getElementById('lista-corredores-publica').innerHTML =
   CORREDORES_MAESTRO.map(c=>`<option value="${c}">`).join('');
+document.getElementById('lista-equipos-publica').innerHTML =
+  EQUIPOS_MAESTRO.map(e=>`<option value="${e}">`).join('');
 
 cambiarSubData('kom');
 cargarDatos();
