@@ -639,8 +639,36 @@ function cambiarVarTipo(tipo){
   pintarVAR();
 }
 
-function filaVarVacia(numero, nombreEtapa){
-  return `<tr><td>${numero}${nombreEtapa ? ' · '+nombreEtapa : ''}</td><td class="mini">—</td><td style="text-align:right">—</td><td style="text-align:right" class="total-puntos"></td></tr>`;
+// Busca a un corredor/equipo en un listado (top10/top5) y devuelve SU POSICIÓN
+// dentro de ese listado además de los puntos que le tocan por estar ahí.
+function posicionYPuntos(lista, nombre, tabla){
+  if(!lista || !lista.length) return null;
+  const objetivo = normaliza(nombre);
+  const idx = lista.findIndex(n => normaliza(n) === objetivo);
+  if(idx === -1 || idx >= tabla.length) return null;
+  return { posicion: idx + 1, puntos: tabla[idx] };
+}
+
+// Desglose de UN corredor en UNA etapa, categoría a categoría, con posición en cada una
+function contribucionesCorredorEtapa(nombre, etapaResultado, tabla){
+  const partes = [];
+  const rE = posicionYPuntos(etapaResultado.etapa, nombre, tabla.etapa); if(rE) partes.push({ icono:'🚴', cat:'Etapa', ...rE });
+  const rG = posicionYPuntos(etapaResultado.general, nombre, tabla.generalDiaria); if(rG) partes.push({ icono:'👑', cat:'General', ...rG });
+  const rP = posicionYPuntos(etapaResultado.puntos, nombre, tabla.regularidadDiaria); if(rP) partes.push({ icono:'🟢', cat:'Regularidad', ...rP });
+  const rM = posicionYPuntos(etapaResultado.montana, nombre, tabla.montanaDiaria); if(rM) partes.push({ icono:'🔴', cat:'Montaña', ...rM });
+  return partes;
+}
+
+// Igual, pero para un equipo (clasificación de equipos + etapa CRE si aplica)
+function contribucionesEquipoEtapa(nombre, etapaResultado, tabla){
+  const partes = [];
+  const rEq = posicionYPuntos(etapaResultado.equipos, nombre, tabla.equiposDiaria); if(rEq) partes.push({ icono:'🚩', cat:'Equipos', ...rEq });
+  const rCRE = posicionYPuntos(etapaResultado.etapaEquipos, nombre, tabla.etapa); if(rCRE) partes.push({ icono:'🚴', cat:'Etapa (CRE)', ...rCRE });
+  return partes;
+}
+
+function formatoPartes(partes){
+  return partes.map(p => `${p.icono} ${p.cat} (${p.posicion}º) +${p.puntos}`).join(' · ');
 }
 
 function pintarVAR(){
@@ -656,32 +684,25 @@ function pintarVAR(){
     const nombre = document.getElementById('var-buscar-corredor').value.trim();
     if(!nombre){ cont.innerHTML = '<p class="mini">Escribe el nombre de un corredor.</p>'; return; }
     let acumulado = 0, huboAlguno = false;
-    let html = '<table><thead><tr><th>Etapa</th><th>De dónde salen</th><th style="text-align:right">Pts día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
+    let html = '<table><thead><tr><th>Etapa</th><th>De dónde salen (con su posición)</th><th style="text-align:right">Pts día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
     etapas.forEach(e=>{
-      const partes = [];
-      const pEtapa = puntosDeLista(e.etapa, nombre, tabla.etapa); if(pEtapa) partes.push(`🚴 Etapa +${pEtapa}`);
-      const pGeneral = puntosDeLista(e.general, nombre, tabla.generalDiaria); if(pGeneral) partes.push(`👑 General +${pGeneral}`);
-      const pPuntos = puntosDeLista(e.puntos, nombre, tabla.regularidadDiaria); if(pPuntos) partes.push(`🟢 Regularidad +${pPuntos}`);
-      const pMontana = puntosDeLista(e.montana, nombre, tabla.montanaDiaria); if(pMontana) partes.push(`🔴 Montaña +${pMontana}`);
-      const total = pEtapa + pGeneral + pPuntos + pMontana;
+      const partes = contribucionesCorredorEtapa(nombre, e, tabla);
+      const total = partes.reduce((s,p)=>s+p.puntos, 0);
       if(total>0) huboAlguno = true;
       acumulado += total;
-      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre : ''}</td><td class="mini">${partes.join(' · ') || '—'}</td><td style="text-align:right">${total || '—'}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre : ''}</td><td class="mini">${formatoPartes(partes) || '—'}</td><td style="text-align:right">${total || '—'}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
     });
     if(DATOS.bonusFinal){
       const bf = DATOS.bonusFinal;
-      const pGeneralF = puntosDeLista(bf.general, nombre, tabla.generalFinal);
-      const pPuntosF = puntosDeLista(bf.puntos, nombre, tabla.regularidadFinal);
-      const pMontanaF = puntosDeLista(bf.montana, nombre, tabla.montanaFinal);
-      const totalF = pGeneralF + pPuntosF + pMontanaF;
+      const partesF = [];
+      const rGF = posicionYPuntos(bf.general, nombre, tabla.generalFinal); if(rGF) partesF.push({ icono:'👑', cat:'General final', ...rGF });
+      const rPF = posicionYPuntos(bf.puntos, nombre, tabla.regularidadFinal); if(rPF) partesF.push({ icono:'🟢', cat:'Regularidad final', ...rPF });
+      const rMF = posicionYPuntos(bf.montana, nombre, tabla.montanaFinal); if(rMF) partesF.push({ icono:'🔴', cat:'Montaña final', ...rMF });
+      const totalF = partesF.reduce((s,p)=>s+p.puntos, 0);
       if(totalF > 0){
         huboAlguno = true;
         acumulado += totalF;
-        const partesF = [];
-        if(pGeneralF) partesF.push(`👑 General final +${pGeneralF}`);
-        if(pPuntosF) partesF.push(`🟢 Regularidad final +${pPuntosF}`);
-        if(pMontanaF) partesF.push(`🔴 Montaña final +${pMontanaF}`);
-        html += `<tr class="fila-lider"><td><strong>Bonus final</strong></td><td class="mini">${partesF.join(' · ')}</td><td style="text-align:right">${totalF}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+        html += `<tr class="fila-lider"><td><strong>Bonus final</strong></td><td class="mini">${formatoPartes(partesF)}</td><td style="text-align:right">${totalF}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
       }
     }
     html += '</tbody></table>';
@@ -692,22 +713,20 @@ function pintarVAR(){
     const nombre = document.getElementById('var-buscar-equipo').value.trim();
     if(!nombre){ cont.innerHTML = '<p class="mini">Escribe el nombre de un equipo.</p>'; return; }
     let acumulado = 0, huboAlguno = false;
-    let html = '<table><thead><tr><th>Etapa</th><th>De dónde salen</th><th style="text-align:right">Pts día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
+    let html = '<table><thead><tr><th>Etapa</th><th>De dónde salen (con su posición)</th><th style="text-align:right">Pts día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
     etapas.forEach(e=>{
-      const partes = [];
-      const pEquipo = puntosDeLista(e.equipos, nombre, tabla.equiposDiaria); if(pEquipo) partes.push(`🚩 Equipos +${pEquipo}`);
-      const pEtapaEquipo = puntosDeLista(e.etapaEquipos, nombre, tabla.etapa); if(pEtapaEquipo) partes.push(`🚴 Etapa (CRE) +${pEtapaEquipo}`);
-      const total = pEquipo + pEtapaEquipo;
+      const partes = contribucionesEquipoEtapa(nombre, e, tabla);
+      const total = partes.reduce((s,p)=>s+p.puntos, 0);
       if(total>0) huboAlguno = true;
       acumulado += total;
-      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre : ''}</td><td class="mini">${partes.join(' · ') || '—'}</td><td style="text-align:right">${total || '—'}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre : ''}</td><td class="mini">${formatoPartes(partes) || '—'}</td><td style="text-align:right">${total || '—'}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
     });
     if(DATOS.bonusFinal){
-      const pEquipoF = puntosDeLista(DATOS.bonusFinal.equipos, nombre, tabla.equiposFinal);
-      if(pEquipoF > 0){
+      const rEqF = posicionYPuntos(DATOS.bonusFinal.equipos, nombre, tabla.equiposFinal);
+      if(rEqF){
         huboAlguno = true;
-        acumulado += pEquipoF;
-        html += `<tr class="fila-lider"><td><strong>Bonus final</strong></td><td class="mini">🚩 Equipos final +${pEquipoF}</td><td style="text-align:right">${pEquipoF}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+        acumulado += rEqF.puntos;
+        html += `<tr class="fila-lider"><td><strong>Bonus final</strong></td><td class="mini">🚩 Equipos final (${rEqF.posicion}º) +${rEqF.puntos}</td><td style="text-align:right">${rEqF.puntos}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
       }
     }
     html += '</tbody></table>';
@@ -719,20 +738,54 @@ function pintarVAR(){
     const participante = DATOS.participantes.find(p=>p.id===id);
     if(!participante){ cont.innerHTML = '<p class="mini">Elige un participante.</p>'; return; }
     let acumulado = 0;
-    let html = '<table><thead><tr><th>Etapa</th><th>De dónde salen</th><th style="text-align:right">Pts día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
+    let html = '<table><thead><tr><th>Etapa</th><th>De dónde salen — corredor a corredor, categoría a categoría</th><th style="text-align:right">Pts día</th><th style="text-align:right">Acumulado</th></tr></thead><tbody>';
     etapas.forEach(e=>{
-      const contribuciones = detalleContribucionEtapa(participante, e, tabla).filter(d=>d.puntos>0);
-      const total = contribuciones.reduce((s,d)=>s+d.puntos,0);
+      const bloques = [];
+      let total = 0;
+      (participante.corredores || []).forEach(corredor=>{
+        const partes = contribucionesCorredorEtapa(corredor, e, tabla);
+        if(partes.length){
+          const subtotal = partes.reduce((s,p)=>s+p.puntos, 0);
+          total += subtotal;
+          bloques.push(`<div style="margin-bottom:4px;"><strong>🚴 ${corredor}</strong>: ${formatoPartes(partes)} <span class="mini">(=${subtotal})</span></div>`);
+        }
+      });
+      (participante.equipos || []).forEach(equipo=>{
+        const partes = contribucionesEquipoEtapa(equipo, e, tabla);
+        if(partes.length){
+          const subtotal = partes.reduce((s,p)=>s+p.puntos, 0);
+          total += subtotal;
+          bloques.push(`<div style="margin-bottom:4px;"><strong>🚩 ${equipo}</strong>: ${formatoPartes(partes)} <span class="mini">(=${subtotal})</span></div>`);
+        }
+      });
       acumulado += total;
-      const partes = contribuciones.map(d=>`${d.tipo==='equipo' ? '🚩' : '🚴'} ${d.nombre} +${d.puntos}`);
-      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre : ''}</td><td class="mini">${partes.join(' · ') || '—'}</td><td style="text-align:right">${total || '—'}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+      html += `<tr><td>${e.numero}${e.nombre ? ' · '+e.nombre : ''}</td><td class="mini">${bloques.join('') || '—'}</td><td style="text-align:right">${total || '—'}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
     });
     if(DATOS.bonusFinal){
-      const { total: totalF, detalle: detalleF } = puntosBonusFinal(participante, DATOS.bonusFinal, tabla);
+      const bf = DATOS.bonusFinal;
+      const bloquesF = [];
+      let totalF = 0;
+      (participante.corredores || []).forEach(corredor=>{
+        const partesF = [];
+        const rGF = posicionYPuntos(bf.general, corredor, tabla.generalFinal); if(rGF) partesF.push({ icono:'👑', cat:'General final', ...rGF });
+        const rPF = posicionYPuntos(bf.puntos, corredor, tabla.regularidadFinal); if(rPF) partesF.push({ icono:'🟢', cat:'Regularidad final', ...rPF });
+        const rMF = posicionYPuntos(bf.montana, corredor, tabla.montanaFinal); if(rMF) partesF.push({ icono:'🔴', cat:'Montaña final', ...rMF });
+        if(partesF.length){
+          const subtotal = partesF.reduce((s,p)=>s+p.puntos,0);
+          totalF += subtotal;
+          bloquesF.push(`<div style="margin-bottom:4px;"><strong>🚴 ${corredor}</strong>: ${formatoPartes(partesF)} <span class="mini">(=${subtotal})</span></div>`);
+        }
+      });
+      (participante.equipos || []).forEach(equipo=>{
+        const rEqF = posicionYPuntos(bf.equipos, equipo, tabla.equiposFinal);
+        if(rEqF){
+          totalF += rEqF.puntos;
+          bloquesF.push(`<div style="margin-bottom:4px;"><strong>🚩 ${equipo}</strong>: 🚩 Equipos final (${rEqF.posicion}º) +${rEqF.puntos}</div>`);
+        }
+      });
       if(totalF > 0){
         acumulado += totalF;
-        const partesF = detalleF.map(d=>`${d.tipo.includes('equipo') ? '🚩' : '🚴'} ${d.nombre} +${d.puntos}`);
-        html += `<tr class="fila-lider"><td><strong>Bonus final</strong></td><td class="mini">${partesF.join(' · ')}</td><td style="text-align:right">${totalF}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
+        html += `<tr class="fila-lider"><td><strong>Bonus final</strong></td><td class="mini">${bloquesF.join('')}</td><td style="text-align:right">${totalF}</td><td style="text-align:right" class="total-puntos">${acumulado}</td></tr>`;
       }
     }
     html += '</tbody></table>';
