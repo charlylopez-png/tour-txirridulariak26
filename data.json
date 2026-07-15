@@ -1321,6 +1321,56 @@
         "RED BULL",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 11,
+      "nombre": "Vichy → Nevers",
+      "etapa": [
+        "WAERENSKJOLD",
+        "KOOIJ",
+        "FRETIN",
+        "ARTZ",
+        "GIRMAY",
+        "TURGIS",
+        "RUSSO",
+        "GAVIRIA",
+        "ACKERMANN",
+        "PEDERSEN"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "AYUSO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "DEL TORO",
+        "SKJELMOSE",
+        "LENNY MTNZ",
+        "TOM PIDCOCK"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "GIRMAY",
+        "MERLIER",
+        "PHILIPSEN",
+        "MAX KANTER"
+      ],
+      "montana": [
+        "POGACAR",
+        "VINGEGAARD",
+        "CARAPAZ",
+        "V PARET PEINTRE",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "VISMA",
+        "RED BULL",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
