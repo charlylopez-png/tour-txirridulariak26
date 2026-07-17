@@ -1421,6 +1421,56 @@
         "RED BULL",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 13,
+      "nombre": "Dole → Belfort",
+      "etapa": [
+        "SCHMID",
+        "TEJADA",
+        "TOM PIDCOCK",
+        "VAN GILS",
+        "MC NULTY",
+        "VAUQUELIN",
+        "JORDAN JEGAT",
+        "BRAZ AFONSO",
+        "WELLENS",
+        "LUKE PLAPP"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "TOM PIDCOCK",
+        "AYUSO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "DEL TORO",
+        "SKJELMOSE",
+        "LENNY MTNZ"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "PHILIPSEN",
+        "GIRMAY",
+        "MERLIER",
+        "MAX KANTER"
+      ],
+      "montana": [
+        "POGACAR",
+        "VINGEGAARD",
+        "CARAPAZ",
+        "TOM PIDCOCK",
+        "V PARET PEINTRE"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "RED BULL",
+        "VISMA",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
