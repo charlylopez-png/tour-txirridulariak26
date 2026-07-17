@@ -1371,6 +1371,56 @@
         "RED BULL",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 12,
+      "nombre": "Circuit Nevers Magny-Cours → Chalon sur Saône",
+      "etapa": [
+        "MERLIER",
+        "KOOIJ",
+        "PHILIPSEN",
+        "GIRMAY",
+        "FRETIN",
+        "TURGIS",
+        "MAX KANTER",
+        "RUSSO",
+        "PEDERSEN",
+        "ARTZ"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "AYUSO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "DEL TORO",
+        "SKJELMOSE",
+        "LENNY MTNZ",
+        "TOM PIDCOCK"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "GIRMAY",
+        "PHILIPSEN",
+        "MERLIER",
+        "MAX KANTER"
+      ],
+      "montana": [
+        "POGACAR",
+        "VINGEGAARD",
+        "CARAPAZ",
+        "V PARET PEINTRE",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "VISMA",
+        "RED BULL",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
