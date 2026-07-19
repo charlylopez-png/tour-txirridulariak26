@@ -1471,6 +1471,56 @@
         "VISMA",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 14,
+      "nombre": "Mulhouse → Le Markstein Fellering",
+      "etapa": [
+        "POGACAR",
+        "DEL TORO",
+        "SEIXAS",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "AYUSO",
+        "LIPOWITZ",
+        "CARAPAZ",
+        "TOBIAS JOHANNESSEN",
+        "SKJELMOSE"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "VINGEGAARD",
+        "EVENEPOEL",
+        "SEIXAS",
+        "AYUSO",
+        "LIPOWITZ",
+        "DEL TORO",
+        "SKJELMOSE",
+        "TOM PIDCOCK",
+        "LENNY MTNZ"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "PHILIPSEN",
+        "GIRMAY",
+        "MERLIER",
+        "MAX KANTER"
+      ],
+      "montana": [
+        "POGACAR",
+        "V PARET PEINTRE",
+        "CARAPAZ",
+        "VINGEGAARD",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "VISMA",
+        "RED BULL",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
