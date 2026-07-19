@@ -8,11 +8,11 @@ const TABLA_PUNTOS_DEFECTO = {
   generalDiaria:      [50, 45, 40, 35, 30, 25, 20, 15, 10, 5],
   generalFinal:       [600, 400, 200, 125, 100, 80, 70, 60, 50, 40],
   regularidadDiaria:  [25, 20, 15, 10, 5],
-  regularidadFinal:   [25, 20, 15, 10, 5],
+  regularidadFinal:   [125, 75, 50, 30, 15],
   montanaDiaria:      [25, 20, 15, 10, 5],
   montanaFinal:       [125, 75, 50, 30, 15],
   equiposDiaria:      [25, 20, 15, 10, 5],
-  equiposFinal:       [25, 20, 15, 10, 5],
+  equiposFinal:       [125, 75, 50, 30, 15],
 };
 
 // Devuelve la tabla de puntos activa: la personalizada por el admin si existe
