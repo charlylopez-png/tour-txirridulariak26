@@ -1521,6 +1521,56 @@
         "RED BULL",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 15,
+      "nombre": "Champagnole → Plateau de Solaison",
+      "etapa": [
+        "EVENEPOEL",
+        "POGACAR",
+        "DEL TORO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "LENNY MTNZ",
+        "SKJELMOSE",
+        "AYUSO",
+        "YATES",
+        "SIMMONS"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "EVENEPOEL",
+        "DEL TORO",
+        "SEIXAS",
+        "LIPOWITZ",
+        "AYUSO",
+        "SKJELMOSE",
+        "LENNY MTNZ",
+        "TOM PIDCOCK",
+        "JORDAN JEGAT"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "PHILIPSEN",
+        "GIRMAY",
+        "MERLIER",
+        "MAX KANTER"
+      ],
+      "montana": [
+        "POGACAR",
+        "V PARET PEINTRE",
+        "CARAPAZ",
+        "TOM PIDCOCK",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "RED BULL",
+        "VISMA",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
