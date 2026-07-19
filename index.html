@@ -1184,6 +1184,12 @@ function svgHistorialPosiciones(historial, totalParticipantes){
   let circulos = historial.map((h,i)=>
     `<circle cx="${x(i)}" cy="${y(h.posicion)}" r="3.5" fill="var(--amarillo)"><title>Etapa ${h.numero}: ${h.posicion}º</title></circle>`
   ).join('');
+  // Etiqueta con la posición exacta, visible siempre (no solo al pasar el ratón)
+  let etiquetasPos = historial.map((h,i)=>{
+    const cerca_arriba = y(h.posicion) < margen + 16;
+    const yEtiqueta = cerca_arriba ? y(h.posicion) + 13 : y(h.posicion) - 7;
+    return `<text x="${x(i)}" y="${yEtiqueta}" font-size="9" font-weight="700" fill="var(--amarillo)" text-anchor="middle">${h.posicion}º</text>`;
+  }).join('');
   let etiquetasX = historial.map((h,i)=> i%2===0 || n<=10 ? `<text x="${x(i)}" y="${alto-6}" font-size="9" fill="#9aa2a9" text-anchor="middle">${h.numero}</text>` : '').join('');
 
   return `<svg viewBox="0 0 ${ancho} ${alto}" style="width:100%; height:auto; background:var(--asfalto-3); border-radius:10px;">
@@ -1193,6 +1199,7 @@ function svgHistorialPosiciones(historial, totalParticipantes){
     <text x="${margen-6}" y="${y(totalParticipantes)+3}" font-size="9" fill="#9aa2a9" text-anchor="end">${totalParticipantes}º</text>
     <polyline points="${puntos}" fill="none" stroke="var(--amarillo)" stroke-width="2"/>
     ${circulos}
+    ${etiquetasPos}
     ${etiquetasX}
   </svg>`;
 }
