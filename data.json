@@ -1571,6 +1571,56 @@
         "VISMA",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 16,
+      "nombre": "Évian les Bains → Thonon les Bains",
+      "etapa": [
+        "EVENEPOEL",
+        "POGACAR",
+        "SKJELMOSE",
+        "SEIXAS",
+        "DEL TORO",
+        "CATTANEO",
+        "ARENSMAN",
+        "ARMIRAIL",
+        "CASTRILLO",
+        "TARLING"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "EVENEPOEL",
+        "DEL TORO",
+        "SEIXAS",
+        "AYUSO",
+        "SKJELMOSE",
+        "LENNY MTNZ",
+        "TOM PIDCOCK",
+        "JORDAN JEGAT",
+        "YANNIS VOISARD"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "PHILIPSEN",
+        "GIRMAY",
+        "MAX KANTER",
+        "KOOIJ"
+      ],
+      "montana": [
+        "POGACAR",
+        "V PARET PEINTRE",
+        "CARAPAZ",
+        "EVENEPOEL",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "RED BULL",
+        "VISMA",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
