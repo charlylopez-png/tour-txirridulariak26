@@ -1621,6 +1621,56 @@
         "VISMA",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 17,
+      "nombre": "Chambéry → Voiron",
+      "etapa": [
+        "PHILIPSEN",
+        "SCHMID",
+        "KOOIJ",
+        "ASKEY",
+        "PLUIMERS",
+        "RUSSO",
+        "ARTZ",
+        "PEDERSEN",
+        "MATTHEWS",
+        "GATE"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "EVENEPOEL",
+        "DEL TORO",
+        "SEIXAS",
+        "AYUSO",
+        "SKJELMOSE",
+        "LENNY MTNZ",
+        "TOM PIDCOCK",
+        "JORDAN JEGAT",
+        "YANNIS VOISARD"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "PHILIPSEN",
+        "GIRMAY",
+        "MAX KANTER",
+        "KOOIJ"
+      ],
+      "montana": [
+        "POGACAR",
+        "V PARET PEINTRE",
+        "CARAPAZ",
+        "EVENEPOEL",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "RED BULL",
+        "VISMA",
+        "DECATHLON"
+      ]
     }
   ],
   "bonusFinal": null,
