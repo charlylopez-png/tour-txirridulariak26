@@ -1671,6 +1671,56 @@
         "VISMA",
         "DECATHLON"
       ]
+    },
+    {
+      "numero": 18,
+      "nombre": "Voiron → Orcières Merlette",
+      "etapa": [
+        "CARAPAZ",
+        "SCHMID",
+        "JORGENSON",
+        "V PARET PEINTRE",
+        "TOBIAS JOHANNESSEN",
+        "RAÚL G PIERNA",
+        "CASTRILLO",
+        "LENNY MTNZ",
+        "EVENEPOEL",
+        "TOM PIDCOCK"
+      ],
+      "etapaEquipos": [],
+      "general": [
+        "POGACAR",
+        "EVENEPOEL",
+        "DEL TORO",
+        "SEIXAS",
+        "AYUSO",
+        "SKJELMOSE",
+        "LENNY MTNZ",
+        "TOM PIDCOCK",
+        "JORDAN JEGAT",
+        "CARAPAZ"
+      ],
+      "puntos": [
+        "PEDERSEN",
+        "PHILIPSEN",
+        "GIRMAY",
+        "MAX KANTER",
+        "KOOIJ"
+      ],
+      "montana": [
+        "POGACAR",
+        "V PARET PEINTRE",
+        "CARAPAZ",
+        "EVENEPOEL",
+        "SEIXAS"
+      ],
+      "equipos": [
+        "LIDL-TREK",
+        "UAE",
+        "RED BULL",
+        "DECATHLON",
+        "VISMA"
+      ]
     }
   ],
   "bonusFinal": null,
