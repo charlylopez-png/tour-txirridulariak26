@@ -291,10 +291,17 @@ function puntosPorCategoriaParticipante(participante, datos){
 // Devuelve los ids de los participantes que lideran cada "maillot" del grupo
 // (empates: se incluyen todos los que compartan el máximo).
 function calcularLideresJersey(datos){
-  const porParticipante = (datos.participantes || []).map(p => ({
-    id: p.id,
-    ...puntosPorCategoriaParticipante(p, datos)
-  }));
+  const clasificacion = calcularClasificacion(datos);
+  const porParticipante = (datos.participantes || []).map(p => {
+    const cat = puntosPorCategoriaParticipante(p, datos);
+    const fila = clasificacion.find(f => f.id === p.id);
+    return {
+      id: p.id,
+      total: fila ? fila.total : 0,        // maillot amarillo = líder de TODO, como en el Tour real
+      regularidad: cat.regularidad,
+      montana: cat.montana,
+    };
+  });
 
   function lideres(campo){
     if(!porParticipante.length) return [];
@@ -304,7 +311,7 @@ function calcularLideresJersey(datos){
   }
 
   return {
-    general: lideres('general'),
+    general: lideres('total'),
     regularidad: lideres('regularidad'),
     montana: lideres('montana'),
   };
